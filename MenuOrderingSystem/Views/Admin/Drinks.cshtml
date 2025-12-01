@@ -1,0 +1,59 @@
+﻿@{
+    ViewBag.Title = "Admin | Manage Drinks";
+}
+
+<h2>Manage Drinks</h2>
+
+<a asp-action="AddDrink" class="btn btn-primary mb-3">➕ Add New Drink</a>
+
+<input type="text" id="searchBox" class="form-control mb-3" placeholder="Search drinks..." />
+
+<div id="drinksContainer">
+    <!-- Partial (_Drinks.cshtml) will load here -->
+</div>
+
+@section foot {
+    <script>
+        let currentSort = "name";
+        let currentPage = 1;
+
+        // Load drinks with AJAX
+        function loadDrinks(page = 1, sort = currentSort, search = $("#searchBox").val()) {
+            $.get("/Admin/LoadDrinks", { page: page, sort: sort, search: search }, function (result) {
+                $("#drinksContainer").html(result);
+
+                // restore arrow indicator
+                $(".sort-arrow").text(""); // clear all
+                let arrow = sort.endsWith("_desc") ? "▼" : "▲";
+                $(`.sort-link[data-sort='${sort.replace("_desc","")}'] .sort-arrow`).text(arrow);
+            });
+        }
+
+        // 🔃 Sorting
+        $(document).on("click", ".sort-link", function () {
+            let sortField = $(this).data("sort");
+            if (currentSort === sortField) {
+                currentSort = currentSort.endsWith("_desc") ? sortField : sortField + "_desc";
+            } else {
+                currentSort = sortField;
+            }
+            loadDrinks(1, currentSort);
+        });
+
+        // 📄 Paging
+        $(document).on("click", ".load-page", function () {
+            let page = $(this).data("page");
+            loadDrinks(page, currentSort);
+        });
+
+        // 🔍 Searching
+        $("#searchBox").on("keyup", function () {
+            loadDrinks(1, currentSort, $(this).val());
+        });
+
+        // Initial load
+        $(document).ready(function () {
+            loadDrinks();
+        });
+    </script>
+}

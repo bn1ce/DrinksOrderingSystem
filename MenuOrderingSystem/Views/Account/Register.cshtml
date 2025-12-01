@@ -1,0 +1,66 @@
+﻿@using MenuOrderingSystem.Models.ViewModels
+@model RegisterVM
+
+@{
+    ViewBag.Title = "Account | Register";
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+}
+
+<div class="text-center mb-4">
+    <img src="~/images/logo.png" alt="CHAGEE Logo" style="width:80px; margin-bottom:10px;" />
+    <h2 class="mb-2">Create an Account</h2>
+    <p class="text-muted">Please fill in the details to sign up.</p>
+</div>
+
+<form asp-action="Register" asp-controller="Account" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+    <!-- Full Name -->
+    <div class="mb-3">
+        <input asp-for="Name" class="form-control" placeholder="Full Name" />
+        <span asp-validation-for="Name" class="text-danger small"></span>
+    </div>
+
+    <!-- Email -->
+    <div class="mb-3">
+        <input asp-for="Email" class="form-control" placeholder="Email Address" />
+        <span asp-validation-for="Email" class="text-danger small"></span>
+    </div>
+
+    <!-- Phone Number -->
+    <div class="mb-3">
+        <input asp-for="PhoneNumber" class="form-control" placeholder="Phone Number" />
+        <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+    </div>
+
+    <!-- Password -->
+    <div class="mb-3">
+        <input asp-for="Password" type="password" class="form-control" placeholder="Password" />
+        <span asp-validation-for="Password" class="text-danger small"></span>
+    </div>
+
+    <!-- Confirm Password -->
+    <div class="mb-3">
+        <input asp-for="Confirm" type="password" class="form-control" placeholder="Confirm Password" />
+        <span asp-validation-for="Confirm" class="text-danger small"></span>
+    </div>
+
+    <!-- Profile Photo (Optional) -->
+    <div class="mb-3">
+        <input asp-for="Photo" type="file" class="form-control" accept=".jpg,.jpeg,.png" />
+        <span asp-validation-for="Photo" class="text-danger small"></span>
+        <small class="text-muted">*Optional</small>
+    </div>
+
+    <button type="submit" class="btn btn-dark w-100">Register</button>
+</form>
+
+<p class="text-center mt-3">
+    Already have an account? <a href="/Account/Login">Sign in</a>
+</p>
+
+@section foot {
+    <script>
+        $.validator.setDefaults({ ignore: '' });
+    </script>
+}

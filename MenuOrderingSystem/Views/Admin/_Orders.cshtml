@@ -1,0 +1,108 @@
+﻿@using MenuOrderingSystem.Models
+@model PagedResult<MenuOrderingSystem.Models.Order>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                <a href="javascript:void(0)" onclick="toggleSort('id')">
+                    Order ID <span id="sort-id">▲▼</span>
+                </a>
+            </th>
+            <th>Member Email</th>
+            <th>
+                <a href="javascript:void(0)" onclick="toggleSort('time')">
+                    Order Time <span id="sort-time">▲▼</span>
+                </a>
+            </th>
+            <th>
+                <a href="javascript:void(0)" onclick="toggleSort('total')">
+                    Total (RM) <span id="sort-total">▲▼</span>
+                </a>
+            </th>
+            <th>Status</th> 
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model.Items)
+        {
+            <tr>
+                <td>@order.OrderID</td>
+                <td>@order.MemberEmail</td>
+                <td>@order.OrderTime.ToString("g")</td>
+                <td>@order.TotalAmount.ToString("F2")</td>
+                <td>
+                    @switch (order.Status)
+                    {
+                        case "Pending":
+                            <span class="badge bg-warning text-dark">@order.Status</span>
+                            break;
+                        case "Paid":
+                            <span class="badge bg-success">@order.Status</span>
+                            break;
+                        case "Cancelled":
+                            <span class="badge bg-danger">@order.Status</span>
+                            break;
+                        default:
+                            <span class="badge bg-secondary">@order.Status</span>
+                            break;
+                    }
+                </td>
+                <td>
+                    <a asp-action="OrderDetail" asp-route-id="@order.OrderID" class="btn btn-sm btn-info">View Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Paging -->
+<div class="d-flex justify-content-between">
+    <div>
+        Showing @((Model.Page - 1) * Model.PageSize + 1) -
+        @(Math.Min(Model.Page * Model.PageSize, Model.TotalItems)) of @Model.TotalItems
+    </div>
+    <div>
+        @if (Model.Page > 1)
+        {
+            <button class="btn btn-sm btn-secondary" onclick="page--; loadOrders()">Previous</button>
+        }
+        @if (Model.Page * Model.PageSize < Model.TotalItems)
+        {
+            <button class="btn btn-sm btn-secondary" onclick="page++; loadOrders()">Next</button>
+        }
+    </div>
+</div>
+
+<script>
+    function toggleSort(field) {
+        if (sort === field) {
+            sort = field + "_desc";
+        } else {
+            sort = field;
+        }
+        loadOrders();
+        updateArrows();
+    }
+
+    function updateArrows() {
+        // Reset to neutral arrows
+        $("#sort-id").text("▲▼");
+        $("#sort-time").text("▲▼");
+        $("#sort-total").text("▲▼");
+
+        // Highlight active sort
+        if (sort.startsWith("id")) {
+            $("#sort-id").text(sort.endsWith("_desc") ? "▼" : "▲");
+        } else if (sort.startsWith("time")) {
+            $("#sort-time").text(sort.endsWith("_desc") ? "▼" : "▲");
+        } else if (sort.startsWith("total")) {
+            $("#sort-total").text(sort.endsWith("_desc") ? "▼" : "▲");
+        }
+    }
+
+    $(document).ready(function () {
+        updateArrows();
+    });
+</script>

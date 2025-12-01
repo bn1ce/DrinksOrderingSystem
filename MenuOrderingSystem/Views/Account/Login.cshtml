@@ -1,0 +1,42 @@
+﻿@using MenuOrderingSystem.Models.ViewModels
+@model LoginVM
+
+@{
+    ViewBag.Title = "Account | Login";
+    Layout = "_AuthLayout";
+}
+
+<!-- Logo -->
+<div class="auth-logo">
+    <img src="~/images/logo.png" alt="CHAGEE Logo" />
+</div>
+
+<!-- Title -->
+<h2 class="auth-title">Welcome</h2>
+<p class="auth-subtitle">Log in to continue</p>
+
+<!-- Form -->   
+<form method="post">
+    <div asp-validation-summary="ModelOnly" class="validation"></div>
+
+    <div class="mb-3 text-start">
+        <input asp-for="Email" class="form-control" placeholder="Email address" autofocus />
+        <span asp-validation-for="Email" class="validation"></span>
+    </div>
+
+    <div class="mb-3 text-start">
+        <input asp-for="Password" type="password" class="form-control" placeholder="Password" />
+        <span asp-validation-for="Password" class="validation"></span>
+    </div>
+
+    <div class="forgot-password text-end mb-3">
+        <a href="/Account/ResetPassword">Forgot password?</a>
+    </div>
+
+    <button type="submit" class="btn btn-auth">Continue</button>
+</form>
+
+<!-- Footer -->
+<p class="auth-footer">
+    Don’t have an account? <a href="/Account/Register">Sign up</a>
+</p>

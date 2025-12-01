@@ -1,0 +1,56 @@
+﻿@model List<MenuOrderingSystem.Models.Order>
+
+@{
+    ViewBag.Title = "Admin | Manage Orders";
+}
+
+<h2>All Orders</h2>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <input type="text" id="searchBox" placeholder="Search by email or order id" class="form-control" />
+    </div>
+    <div class="col-md-3 d-flex align-items-center">
+        <label for="statusFilter" class="me-2 mb-0">Status:</label>
+        <select id="statusFilter" class="form-select">
+            <option value="">All</option>
+            <option value="Pending">Pending</option>
+            <option value="Paid">Paid</option>
+            <option value="Cancelled">Cancelled</option>
+        </select>
+    </div>
+
+</div>
+
+<div id="ordersTable"></div>
+
+@section foot {
+    <script>
+        let sort = "id_desc";
+        let page = 1;
+
+        function loadOrders() {
+            let search = $("#searchBox").val();
+            let status = $("#statusFilter").val();
+
+            $.get("/Admin/LoadOrders", { search: search, sort: sort, status: status, page: page }, function (data) {
+                $("#ordersTable").html(data);
+            });
+        }
+
+        // Search on keyup
+        $("#searchBox").on("keyup", function () {
+            page = 1;
+            loadOrders();
+        });
+
+        // Filter on status change
+        $("#statusFilter").on("change", function () {
+            page = 1;
+            loadOrders();
+        });
+
+        // Initial load
+        loadOrders();
+    </script>
+}

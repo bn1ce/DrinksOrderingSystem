@@ -1,0 +1,33 @@
+﻿@model List<MenuOrderingSystem.Models.Drink>
+
+@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Fullscreen Hero Section -->
+<section style="min-height:100vh; width:100%; margin:0; padding:0; background:url('/images/homebg.png') no-repeat center center; background-size:cover; position:relative;"></section>
+
+<!-- Next Section -->
+<section class="container py-5">
+    <h2 class="text-center mb-4">About CHAGEE</h2>
+    <p class="text-center text-muted">
+        CHAGEE brings you authentic handcrafted tea beverages made from the finest ingredients.
+        Discover our range of <strong>Milk Tea</strong>, <strong>Fruit Tea</strong>, and <strong>Brew Tea</strong> selections.
+    </p>
+</section>
+
+<div id="map" style="height: 500px;"></div>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+    var map = L.map('map').setView([3.1390, 101.6869], 13); // Kuala Lumpur coordinates
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // Add a marker
+    L.marker([3.1390, 101.6869]).addTo(map)
+        .bindPopup('CHAGEE Store')
+        .openPopup();
+</script>

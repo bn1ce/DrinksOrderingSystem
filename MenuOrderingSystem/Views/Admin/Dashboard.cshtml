@@ -1,0 +1,19 @@
+﻿@{
+    ViewBag.Title = "Admin | Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="list-group">
+    <a asp-controller="Admin" asp-action="Report" class="list-group-item list-group-item-action">
+        📊 Sales Report
+    </a>
+    <a asp-controller="Admin" asp-action="Orders" class="list-group-item list-group-item-action">
+        📦 Orders Maintenance
+    </a>
+    <a asp-controller="Admin" asp-action="Drinks" class="list-group-item list-group-item-action">
+        🍹 Drinks Maintenance
+    </a>
+    <a asp-controller="Admin" asp-action="Members" class="list-group-item list-group-item-action">
+        👥 Members Account Maintenance
+    </a>
+</div>

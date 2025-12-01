@@ -1,0 +1,63 @@
+﻿@model MenuOrderingSystem.Models.Order
+
+@{
+    ViewBag.Title = "Order Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg p-4">
+        <h2 class="text-center text-primary mb-4">📑 Order Details</h2>
+
+        <p><strong>Order ID:</strong> @Model.OrderID</p>
+        <p><strong>Date:</strong> @Model.OrderTime.ToString("dd MMM yyyy HH:mm")</p>
+        <p><strong>Status:</strong> @Model.Status</p>
+
+        <hr />
+
+        <table class="table table-bordered text-center">
+            <thead class="table-light">
+                <tr>
+                    <th>Drink</th>
+                    <th>Size</th>
+                    <th>Sugar</th>
+                    <th>Ice</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.OrderItems)
+                {
+                    var price = item.Size == "Large"
+                    ? item.Drink.PriceLarge
+                    : item.Drink.PriceRegular;
+
+                    <tr>
+                        <td>@item.Drink.Name</td>
+                        <td>@item.Size</td>
+                        <td>@item.SugarLevel</td>
+                        <td>@item.IceLevel</td>
+                        <td>@item.Quantity</td>
+                        <td>RM @price.ToString("N2")</td>
+                        <td>RM @(item.Quantity* price)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="text-end">
+            <h4>Total: <span class="text-success">RM @Model.TotalAmount</span></h4>
+        </div>
+
+        <div class="text-center mt-4">
+            <a asp-controller="History" asp-action="Index" class="btn btn-secondary">
+                ⬅ Back to History
+            </a>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary">
+                🛍️ Continue Shopping
+            </a>
+        </div>
+    </div>
+</div>

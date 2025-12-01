@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="MenuOrderingSystem.Models.Drink">
+    <Position X="9" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAAgAAAABAAAAAQAAAAAAAQAAACAIIAACAA=</HashCode>
+      <FileName>Models\DB.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MenuOrderingSystem.Models.Category">
+    <Position X="3" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACAAgAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\DB.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MenuOrderingSystem.Models.Order">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABAEAAEQAAAAAEAAAAAAAAAoAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Models\DB.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MenuOrderingSystem.Models.OrderItem">
+    <Position X="10.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAQBAAAQwAgAAAAAAAAAAAAAAAAAAAAACAgAAAAAA=</HashCode>
+      <FileName>Models\DB.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MenuOrderingSystem.Models.User">
+    <Position X="2.5" Y="0.5" Width="1.5" />
+    <Members>
+      <Property Name="Email" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACIAAAAAEAAAAAQAAAAAAAAAAAAAIAAAAAA=</HashCode>
+      <FileName>Models\DB.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Email" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="MenuOrderingSystem.Models.Admin">
+    <Position X="1" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\DB.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MenuOrderingSystem.Models.Member">
+    <Position X="3.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAA=</HashCode>
+      <FileName>Models\DB.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="System.Object">
+    <Position X="5.75" Y="4" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,0 +1,108 @@
+﻿@model MenuOrderingSystem.Models.ViewModels.DrinkMenuViewModel
+
+@{
+    ViewBag.Title = "Menu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+
+    <!-- Page Title -->
+    <h2 class="text-center mb-5" style="font-family:'Segoe UI', sans-serif; font-weight:700; color:#2c3e50;">
+        🫖 CHAGEE Drink Menu
+    </h2>
+
+    <!-- Search + Sort -->
+    <div class="d-flex mb-4 justify-content-center">
+        <input type="hidden" name="categoryId" value="@Model.SelectedCategoryId" />
+        <input type="text" name="search" value="" class="form-control me-2" placeholder="Search drinks..." style="max-width:250px;" />
+        <select name="sort" class="form-select" style="max-width:200px;">
+            <option value="">Sort By</option>
+            <option value="name-asc">Name A-Z</option>
+            <option value="name-desc">Name Z-A</option>
+            <option value="price-asc">Price Low → High</option>
+            <option value="price-desc">Price High → Low</option>
+        </select>
+    </div>
+
+    <!-- Category Tabs -->
+    <ul class="nav nav-pills justify-content-center flex-wrap mb-5" id="drinkCategoryTabs">
+        @foreach (var category in Model.Categories)
+        {
+            bool isActive = category.CategoryID == Model.SelectedCategoryId;
+            <li class="nav-item m-2">
+                <a class="nav-link px-4 py-2 @(isActive ? "active" : "")"
+                   href="#"
+                   data-category="@category.CategoryID"
+                   role="tab">
+                    @category.CategoryName
+                </a>
+            </li>
+        }
+    </ul>
+
+    <!-- Drinks Container (AJAX loads here) -->
+    <div id="drinks-container">
+        @Html.Partial("_DrinkList", Model.Drinks)
+    </div>
+
+</div>
+
+<!-- Custom Tab Styling -->
+<style>
+    .nav-pills .nav-link {
+        border-radius: 30px;
+        font-weight: 600;
+        background-color: #ecf0f1;
+        color: #2c3e50;
+        transition: 0.3s;
+    }
+
+        .nav-pills .nav-link:hover {
+            background-color: #d5dbdb;
+        }
+
+        .nav-pills .nav-link.active {
+            background-color: #27ae60 !important;
+            color: white !important;
+        }
+</style>
+
+@section foot {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function loadDrinks() {
+            var search = $("input[name='search']").val();
+            var sort = $("select[name='sort']").val();
+            var categoryId = $("input[name='categoryId']").val();
+
+            $.get('@Url.Action("Filter", "Drink")',
+                { categoryId: categoryId, search: search, sort: sort },
+                function (result) {
+                    $("#drinks-container").html(result);
+                });
+        }
+
+        $(document).ready(function () {
+            // Search live
+            $("input[name='search']").on("keyup", function () {
+                loadDrinks();
+            });
+
+            // Sorting
+            $("select[name='sort']").on("change", function () {
+                loadDrinks();
+            });
+
+            // Category change
+            $("#drinkCategoryTabs a").on("click", function (e) {
+                e.preventDefault();
+                var categoryId = $(this).data("category");
+                $("input[name='categoryId']").val(categoryId);
+                $("#drinkCategoryTabs a").removeClass("active");
+                $(this).addClass("active");
+                loadDrinks();
+            });
+        });
+    </script>
+}

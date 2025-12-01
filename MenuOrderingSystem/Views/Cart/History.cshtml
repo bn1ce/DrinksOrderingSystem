@@ -1,0 +1,81 @@
+﻿@model IEnumerable<MenuOrderingSystem.Models.Order>
+
+@{
+    ViewBag.Title = "Purchase History";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg p-4">
+        <h2 class="text-center text-primary mb-4">📦 My Purchase History</h2>
+
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info text-center">
+                You have no past orders yet.
+                <br />
+            </div>
+        }
+        else
+        {
+            <table class="table table-hover align-middle text-center">
+                <thead class="table-light">
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Date</th>
+                        <th>Total</th>
+                        <th>Items</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model)
+                    {
+                        <tr>
+                            <td>@order.OrderID</td>
+                            <td>@order.OrderTime.ToString("dd MMM yyyy HH:mm")</td>
+                            <td><strong>@order.TotalAmount.ToString("C")</strong></td>
+                            <td>@order.OrderItems.Sum(i => i.Quantity)</td>
+                            <td>
+                                @if (order.Status == "Paid")
+                                {
+                                    <span class="badge bg-success">Paid</span>
+                                }
+                                else if (order.Status == "Cancelled")
+                                {
+                                    <span class="badge bg-danger">Cancelled</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">@order.Status</span>
+                                }
+                            </td>
+                            <td>
+                                <a href="/History/Detail/@order.OrderID" class="btn btn-sm btn-outline-primary">
+                                    🔍 View Details
+                                </a>
+
+                                @if (order.Status == "Paid" && DateTime.Now.Subtract(order.OrderTime).TotalHours <= 2)
+                                {
+                                    <form asp-controller="History" asp-action="Cancel" method="post" class="d-inline">
+                                        <input type="hidden" name="id" value="@order.OrderID" />
+                                        <button type="submit" class="btn btn-sm btn-danger">❌ Cancel</button>
+                                    </form>
+                                }
+                                else if (order.Status == "Cancelled")
+                                {
+                                    <span class="badge bg-danger">Cancelled</span>
+                                }
+                                else if (order.Status == "Paid")
+                                {
+                                    <span class="badge bg-secondary">❌ Expired</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>

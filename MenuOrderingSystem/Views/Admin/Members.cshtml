@@ -1,0 +1,36 @@
+﻿@model List<MenuOrderingSystem.Models.Member>
+
+@{
+    ViewBag.Title = "Admin | Manage Members";
+}
+
+<h2>All Members</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Photo</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var m in Model)
+        {
+            <tr>
+                <td>@m.Email</td>
+                <td>@m.Name</td>
+                <td>@m.Phone</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(m.PhotoURL))
+                    {
+                        <img src="/photos/@m.PhotoURL" alt="Photo" style="height:50px;width:50px;">
+                    }
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>

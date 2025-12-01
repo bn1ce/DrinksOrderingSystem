@@ -1,0 +1,38 @@
+﻿@{
+    ViewBag.Title = "Your Cart";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section head {
+    <style>
+        td img {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            vertical-align: middle;
+        }
+
+        td:nth-child(2),
+        td:nth-child(3),
+        td:nth-child(4) {
+            text-align: right;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+    </style>
+}
+
+<div id="target">
+    <partial name="_ShoppingCart" />
+</div>
+
+@section foot {
+    <script>
+        $(document).on('change', 'select', e => {
+            $(e.target.form).submit()
+        });
+    </script>
+}

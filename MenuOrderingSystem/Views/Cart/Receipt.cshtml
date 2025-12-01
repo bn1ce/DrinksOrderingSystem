@@ -1,0 +1,57 @@
+﻿@model MenuOrderingSystem.Models.Order
+
+@{
+    ViewBag.Title = "Receipt";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg p-4">
+        <h2 class="text-center text-success mb-4">✅ Payment Successful</h2>
+
+        <h4>Receipt</h4>
+        <p><strong>Order ID:</strong> @Model.OrderID</p>
+        <p><strong>Date:</strong> @Model.OrderTime.ToString("dd MMM yyyy HH:mm")</p>
+        <p><strong>Status:</strong> Paid</p>
+
+        <hr />
+
+        <table class="table table-bordered text-center">
+            <thead class="table-light">
+                <tr>
+                    <th>Drink</th>
+                    <th>Size</th>
+                    <th>Qty</th>
+                    <th>Price</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.OrderItems)
+                {
+                    decimal unitPrice = item.Size.ToLower() == "large"
+                    ? item.Drink.PriceLarge
+                    : item.Drink.PriceRegular;
+
+                    <tr>
+                        <td>@item.Drink.Name</td>
+                        <td>@item.Size</td>
+                        <td>@item.Quantity</td>
+                        <td>@unitPrice.ToString("C")</td>
+                        <td>@(item.Quantity* unitPrice)</td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+
+        <div class="text-end">
+            <h4>Total: <span class="text-success">@Model.TotalAmount.ToString("C")</span></h4>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="/History" class="btn btn-primary">📦 View My Orders</a>
+            <a href="/Home/Index" class="btn btn-outline-secondary">🛍️ Continue Shopping</a>
+        </div>
+    </div>
+</div>

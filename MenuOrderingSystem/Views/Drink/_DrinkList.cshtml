@@ -1,0 +1,43 @@
+﻿@model IEnumerable<MenuOrderingSystem.Models.Drink>
+
+<div class="row g-4">
+    @if (Model.Any())
+    {
+        @foreach (var drink in Model)
+        {
+            <div class="col-12 col-sm-6 col-lg-4 d-flex">
+                <div class="card shadow-sm border-0 flex-fill" style="border-radius:20px; overflow:hidden;">
+                    <div class="position-relative">
+                        <img src="~/drinks/@drink.ImageURL"
+                             asp-append-version="true"
+                             alt="@drink.Name"
+                             class="card-img-top"
+                             style="height:250px; object-fit:cover;" />
+                    </div>
+                    <div class="card-body text-center bg-white">
+                        <h5 class="card-title mb-2" style="font-weight:600; color:#34495e;">
+                            @drink.Name
+                        </h5>
+                        <p class="card-text text-muted small mb-3">
+                            @drink.Description
+                        </p>
+                        <p class="mb-3 fw-semibold" style="color:#27ae60;">
+                            Regular: RM @drink.PriceRegular.ToString("0.00")
+                            <span class="text-muted"> | </span>
+                            Large: RM @drink.PriceLarge.ToString("0.00")
+                        </p>
+                        <a href="/Drink/Details?id=@drink.DrinkID"
+                           class="btn btn-outline-success px-4 mt-2"
+                           style="border-radius:50px; font-weight:500;">
+                            🛒 Add to Cart
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p class="text-center text-muted">No drinks found.</p>
+    }
+</div>

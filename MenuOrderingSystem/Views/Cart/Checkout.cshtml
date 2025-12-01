@@ -1,0 +1,50 @@
+﻿@model MenuOrderingSystem.Models.ViewModels.CheckoutViewModel
+
+@{
+    ViewBag.Title = "Payment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">💳 Payment Page</h2>
+
+    <!-- Order Summary -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Order Summary</h5>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped text-center align-middle">
+                <thead>
+                    <tr>
+                        <th>Drink</th>
+                        <th>Qty</th>
+                        <th>Price</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>@item.DrinkName (@item.Size)</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.Price.ToString("C")</td>
+                            <td>@item.Subtotal.ToString("C")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <!-- Total -->
+            <div class="text-end">
+                <h4>Total: <span class="text-success">@Model.TotalAmount.ToString("C")</span></h4>
+            </div>
+        </div>
+    </div>
+                <!-- Proceed Button -->
+                <div class="d-grid gap-2 mt-4">
+                    <form asp-controller="Checkout" asp-action="CreateCheckoutSession" method="post">
+                        <button type="submit" class="btn btn-success">Pay with Stripe</button>
+                    </form>
+</div>

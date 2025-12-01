@@ -1,0 +1,111 @@
+﻿@using MenuOrderingSystem.Models
+@model PagedResult<MenuOrderingSystem.Models.Drink>
+
+<table class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>
+                <a href="javascript:void(0)" class="sort-link" data-sort="name">
+                    Name <span class="sort-arrow"></span>
+                </a>
+            </th>
+            <th>Category</th>
+            <th>
+                <a href="javascript:void(0)" class="sort-link" data-sort="price">
+                    Price (Regular) <span class="sort-arrow"></span>
+                </a>
+            </th>
+            <th>Price (Large)</th>
+            <th>Available</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var drink in Model.Items)
+        {
+            <tr>
+                <td>
+                    @if (!string.IsNullOrEmpty(drink.ImageURL))
+                    {
+                        <img src="~/drinks/@drink.ImageURL" alt="@drink.Name"
+                             width="80" height="80" style="object-fit:cover; border-radius:8px;" />
+                    }
+                    else
+                    {
+                        <span class="text-muted">No Image</span>
+                    }
+                </td>
+                <td>@drink.Name</td>
+                <td>@drink.Category?.CategoryName</td>
+                <td>RM @drink.PriceRegular.ToString("0.00")</td>
+                <td>RM @drink.PriceLarge.ToString("0.00")</td>
+                <td>
+                    @if (drink.IsAvailable)
+                    {
+                        <span class="badge bg-success">Yes</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">No</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="EditDrink" asp-route-id="@drink.DrinkID" class="btn btn-sm btn-warning">✏️ Edit</a>
+                    <form asp-action="DeleteDrink" asp-route-id="@drink.DrinkID" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-sm btn-danger"
+                                onclick="return confirm('Delete this drink?');">
+                            🗑️ Delete
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Paging -->
+<div class="d-flex justify-content-between">
+    <span>Showing @Model.Items.Count of @Model.TotalItems drinks</span>
+    <div>
+        @for (int i = 1; i <= Math.Ceiling((double)Model.TotalItems / Model.PageSize); i++)
+        {
+            <button class="btn btn-sm @(i == Model.Page ? "btn-primary" : "btn-outline-primary") load-page"
+                    data-page="@i">
+                @i
+            </button>
+        }
+    </div>
+</div>
+
+<script>
+    // Toggle sort direction
+    $(".sort-link").off("click").on("click", function () {
+        var field = $(this).data("sort");
+        if (sort === field) {
+            sort = field + "_desc";
+        } else {
+            sort = field;
+        }
+        loadDrinks();
+        updateDrinkArrows();
+    });
+
+    function updateDrinkArrows() {
+        // Reset to neutral arrows
+        $("#sort-name").text("▲▼");
+        $("#sort-price").text("▲▼");
+
+        // Highlight active column
+        if (sort.startsWith("name")) {
+            $("#sort-name").text(sort.endsWith("_desc") ? "▼" : "▲");
+        }
+        else if (sort.startsWith("price")) {
+            $("#sort-price").text(sort.endsWith("_desc") ? "▼" : "▲");
+        }
+    }
+
+    // Run after table load
+    $(document).ready(function () {
+        updateDrinkArrows();
+    });

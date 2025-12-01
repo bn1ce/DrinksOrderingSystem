@@ -1,0 +1,68 @@
+﻿@{
+    ViewBag.Title = "Sales Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <canvas id="salesChart"></canvas>
+    </div>
+    <div class="col-md-6">
+        <canvas id="drinksChart"></canvas>
+    </div>
+</div>
+
+<hr />
+<h3>💰 Reconciliation</h3>
+<p><strong>Database Total:</strong> RM @ViewBag.DbTotal</p>
+<p><strong>Stripe Total:</strong> RM @ViewBag.StripeTotal</p>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Sales by Day
+    const salesCtx = document.getElementById('salesChart');
+    new Chart(salesCtx, {
+        type: 'line',
+        data: {
+            labels: @Html.Raw(ViewBag.SalesLabels),
+            datasets: [{
+                label: 'Sales (RM)',
+                data: @Html.Raw(ViewBag.SalesData),
+                borderColor: 'blue',
+                fill: false
+            }]
+        },
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: '📅 Daily Sales Report',
+                    font: { size: 18 }
+                }
+            }
+        }
+    });
+
+    // Top Drinks
+    const drinksCtx = document.getElementById('drinksChart');
+    new Chart(drinksCtx, {
+        type: 'bar',
+        data: {
+            labels: @Html.Raw(ViewBag.DrinkLabels),
+            datasets: [{
+                label: 'Units Sold',
+                data: @Html.Raw(ViewBag.DrinkData),
+                backgroundColor: 'orange'
+            }]
+        },
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: '🥤 Top 5 Best-Selling Drinks',
+                    font: { size: 18 }
+                }
+            }
+        }
+    });
+</script>

@@ -1,0 +1,38 @@
+﻿@model MenuOrderingSystem.Models.Order
+
+@{
+    ViewBag.Title = "Admin | Orders Details";
+}
+
+<h2>Order #@Model.OrderID</h2>
+<p><strong>Member Email:</strong> @Model.MemberEmail</p>
+<p><strong>Order Time:</strong> @Model.OrderTime.ToString("g")</p>
+<p><strong>Total Amount:</strong> RM @Model.TotalAmount.ToString("F2")</p>
+<p><strong>Status:</strong> @Model.Status</p> 
+
+<h4>Order Items</h4>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Drink Name</th>
+            <th>Size</th>
+            <th>Sugar Level</th>
+            <th>Ice Level</th>
+            <th>Quantity</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.OrderItems)
+        {
+            <tr>
+                <td>@item.Drink.Name</td>
+                <td>@item.Size</td>
+                <td>@item.SugarLevel</td>
+                <td>@item.IceLevel</td>
+                <td>@item.Quantity</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Orders" class="btn btn-secondary">Back to Orders</a>

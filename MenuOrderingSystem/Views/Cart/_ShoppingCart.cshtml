@@ -1,0 +1,81 @@
+﻿@using MenuOrderingSystem.Models.ViewModels
+@model IEnumerable<CartItem>
+
+<div class="container py-5">
+    <h2 class="text-center mb-4">🛒 Your Shopping Cart</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">Your cart is empty.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle text-center shadow-sm">
+                <thead class="table-success">
+                    <tr>
+                        <th>Drink</th>
+                        <th>Size</th>
+                        <th>Ice Level</th>
+                        <th>Sugar Level</th>
+                        <th>Quantity</th>
+                        <th>Price (RM)</th>
+                        <th>Subtotal (RM)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var i in Model)
+                    {
+                        var list = new SelectList(Enumerable.Range(1, 10), i.Quantity);
+
+                        <tr>
+                            <td>@i.DrinkName</td>
+                            <td>@i.Size</td>
+                            <td>@i.IceLevel</td>
+							<td>@i.SugarLevel</td>
+                            <td>
+                                @* AJAX Form *@
+                                <form data-ajax="true"
+                                      data-ajax-update="#target"
+                                      method="post"
+                                      action="/Cart/UpdateCart">
+                                    @Html.DropDownList("Quantity", list, "", new { @class = "form-select" })
+                                    @Html.Hidden("DrinkID", i.Drink.DrinkID)
+
+									@Html.Hidden("Size", i.Size)
+									@Html.Hidden("IceLevel", i.IceLevel)
+									@Html.Hidden("SugarLevel", i.SugarLevel)
+                                </form>
+                            </td>
+                            <td>@i.Price.ToString("0.00")</td>
+                            <td>@(i.Price* i.Quantity)</td>
+                        </tr>
+                    }
+
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="fw-bold">Total: @Model.Sum(i => i.Price * i.Quantity).ToString("0.00")</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-end mt-3">
+            @* Disable button if shopping cart empty *@
+            @{
+                var disabled = !Model.Any();
+            }
+
+            <div class="text-end mt-3">
+                <a href="/Cart/Checkout" class="btn btn-success px-4 py-2 mt-2 @(disabled ? "disabled" : "")">
+                    Proceed to Checkout
+                </a>
+            </div>
+        </div>
+    }
+</div>
