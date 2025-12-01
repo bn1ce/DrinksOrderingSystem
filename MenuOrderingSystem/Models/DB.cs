@@ -23,12 +23,10 @@ namespace MenuOrderingSystem.Models
         public DbSet<User> Users { get; set; }
         public DbSet<Member> Members { get; set; }
         public DbSet<Admin> Admins { get; set; }
+        public DbSet<Rating> Ratings { get; set; }
 
 
     }
-
-
-
 
     public class Drink
     {
@@ -51,6 +49,8 @@ namespace MenuOrderingSystem.Models
 
         // Navigation Property
         public virtual Category Category { get; set; } = null!;
+
+
     }
 
     public class Category
@@ -83,6 +83,8 @@ namespace MenuOrderingSystem.Models
         // Navigation Properties
         public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
         public Member Member { get; set; }
+        public Rating Rating { get; set; }
+
     }
 
     public class OrderItem
@@ -92,9 +94,9 @@ namespace MenuOrderingSystem.Models
         public int OrderID { get; set; }
         public int DrinkID { get; set; }
 
-        public string Size { get; set; } = string.Empty;        
-        public string SugarLevel { get; set; } = string.Empty;  
-        public string IceLevel { get; set; } = string.Empty;    
+        public string Size { get; set; } = string.Empty;
+        public string SugarLevel { get; set; } = string.Empty;
+        public string IceLevel { get; set; } = string.Empty;
         public int Quantity { get; set; }
 
         // Navigation
@@ -126,8 +128,13 @@ namespace MenuOrderingSystem.Models
         [MaxLength(100)]
         public string PhotoURL { get; set; }
 
+        // Navigation Properties
+        public virtual ICollection<Rating> Ratings { get; set; } = new List<Rating>();
 
     }
+
+   
+
     public class DrinkVM
     {
         public int DrinkID { get; set; }
@@ -155,6 +162,23 @@ namespace MenuOrderingSystem.Models
         public string? ImageURL { get; set; }
     }
 
+
+
+    public class Rating
+    {
+        public int RatingID { get; set; }
+
+        [Range(1, 5)]
+        public int Score { get; set; }  // 1 to 5 stars
+
+        [StringLength(500)]
+        public string Feedback { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        // FK to Order
+        public int OrderID { get; set; }
+        public virtual Order Order { get; set; }
+    }
+
 }
-
-

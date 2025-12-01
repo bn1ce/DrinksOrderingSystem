@@ -195,7 +195,7 @@ namespace MenuOrderingSystem.Controllers
             }
 
 
-        // GET: Admin/EditDrink/1
+       
         // GET: Admin/AddDrink
         public IActionResult AddDrink()
         {

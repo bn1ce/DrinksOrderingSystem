@@ -28,29 +28,34 @@ namespace MenuOrderingSystem.Controllers {
 
         // POST: Account/Login
         [HttpPost]
+        // POST: Account/Login
+        [HttpPost]
         public IActionResult Login(LoginVM vm, string? returnURL)
         {
-            var u = db.Users.Find(vm.Email);
+            var user = db.Users.Find(vm.Email);
 
-            if (u == null || !hp.VerifyPassword(u.Hash, vm.Password))
+            if (user == null || !hp.VerifyPassword(user.Hash, vm.Password))
             {
                 ModelState.AddModelError("", "Login credentials not matched.");
+                return View(vm);
             }
 
-            if (ModelState.IsValid)
-            {
-                TempData["Info"] = "Login successfully.";
+            // login OK
+            hp.SignIn(user.Email, user.Role, vm.RememberMe);
+            TempData["Info"] = "Login successfully.";
 
-                hp.SignIn(u!.Email, u.Role, vm.RememberMe);
+            // if user originally tried accessing a protected page
+            if (!string.IsNullOrEmpty(returnURL))
+                return Redirect(returnURL);
 
-                if (string.IsNullOrEmpty(returnURL))
-                {
-                    return RedirectToAction("Index", "Home");
-                }
-            }
+            // ROLE-BASED REDIRECT
+            if (user.Role == "Admin")
+                return RedirectToAction("Dashboard", "Admin");
 
-            return View(vm);
+            // fallback
+            return RedirectToAction("Index", "Home");
         }
+
 
         // GET: Account/Logout
         public IActionResult Logout(string? returnURL)
