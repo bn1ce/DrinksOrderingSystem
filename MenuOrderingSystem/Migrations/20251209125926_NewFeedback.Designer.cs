@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MenuOrderingSystem.Migrations
 {
     [DbContext(typeof(DB))]
-    [Migration("20251127045933_Rating")]
-    partial class Rating
+    [Migration("20251209125926_NewFeedback")]
+    partial class NewFeedback
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -81,6 +81,51 @@ namespace MenuOrderingSystem.Migrations
                     b.HasIndex("CategoryID");
 
                     b.ToTable("Drinks");
+                });
+
+            modelBuilder.Entity("MenuOrderingSystem.Models.Feedback", b =>
+                {
+                    b.Property<int>("FeedbackID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FeedbackID"));
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("FeedbackTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("MemberEmail")
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("FeedbackID");
+
+                    b.HasIndex("MemberEmail");
+
+                    b.HasIndex("UserEmail");
+
+                    b.ToTable("Feedbacks");
                 });
 
             modelBuilder.Entity("MenuOrderingSystem.Models.Order", b =>
@@ -155,46 +200,6 @@ namespace MenuOrderingSystem.Migrations
                     b.ToTable("OrderItems");
                 });
 
-            modelBuilder.Entity("MenuOrderingSystem.Models.Rating", b =>
-                {
-                    b.Property<int>("RatingID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RatingID"));
-
-                    b.Property<string>("Comment")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("DrinkID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("MemberEmail")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("OrderID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Score")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("RatingID");
-
-                    b.HasIndex("DrinkID");
-
-                    b.ToTable("Ratings");
-                });
-
             modelBuilder.Entity("MenuOrderingSystem.Models.User", b =>
                 {
                     b.Property<string>("Email")
@@ -260,6 +265,21 @@ namespace MenuOrderingSystem.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("MenuOrderingSystem.Models.Feedback", b =>
+                {
+                    b.HasOne("MenuOrderingSystem.Models.Member", null)
+                        .WithMany("Feedbacks")
+                        .HasForeignKey("MemberEmail");
+
+                    b.HasOne("MenuOrderingSystem.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserEmail")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MenuOrderingSystem.Models.Order", b =>
                 {
                     b.HasOne("MenuOrderingSystem.Models.Member", "Member")
@@ -290,17 +310,6 @@ namespace MenuOrderingSystem.Migrations
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("MenuOrderingSystem.Models.Rating", b =>
-                {
-                    b.HasOne("MenuOrderingSystem.Models.Drink", "Drink")
-                        .WithMany()
-                        .HasForeignKey("DrinkID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Drink");
-                });
-
             modelBuilder.Entity("MenuOrderingSystem.Models.Category", b =>
                 {
                     b.Navigation("Drinks");
@@ -309,6 +318,11 @@ namespace MenuOrderingSystem.Migrations
             modelBuilder.Entity("MenuOrderingSystem.Models.Order", b =>
                 {
                     b.Navigation("OrderItems");
+                });
+
+            modelBuilder.Entity("MenuOrderingSystem.Models.Member", b =>
+                {
+                    b.Navigation("Feedbacks");
                 });
 #pragma warning restore 612, 618
         }

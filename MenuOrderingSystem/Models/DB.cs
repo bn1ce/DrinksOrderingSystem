@@ -23,8 +23,7 @@ namespace MenuOrderingSystem.Models
         public DbSet<User> Users { get; set; }
         public DbSet<Member> Members { get; set; }
         public DbSet<Admin> Admins { get; set; }
-        public DbSet<Rating> Ratings { get; set; }
-
+        public DbSet<Feedback> Feedbacks { get; set; }
 
     }
 
@@ -83,7 +82,6 @@ namespace MenuOrderingSystem.Models
         // Navigation Properties
         public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
         public Member Member { get; set; }
-        public Rating Rating { get; set; }
 
     }
 
@@ -129,11 +127,11 @@ namespace MenuOrderingSystem.Models
         public string PhotoURL { get; set; }
 
         // Navigation Properties
-        public virtual ICollection<Rating> Ratings { get; set; } = new List<Rating>();
+        public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();
 
     }
 
-   
+
 
     public class DrinkVM
     {
@@ -164,21 +162,27 @@ namespace MenuOrderingSystem.Models
 
 
 
-    public class Rating
+    public class Feedback
     {
-        public int RatingID { get; set; }
+        public int FeedbackID { get; set; }   // Primary Key
 
-        [Range(1, 5)]
-        public int Score { get; set; }  // 1 to 5 stars
+        [Required, MaxLength(100)]
+        public string Email { get; set; }     // Foreign Key to User
+
+        [Required, MaxLength(100)]
+        public string Name { get; set; }
+
+        public DateTime FeedbackTime { get; set; } = DateTime.Now;
+
+        [Range(1, 10)]
+        public int Rating { get; set; }       // 1–10 rating
 
         [StringLength(500)]
-        public string Feedback { get; set; }
+        public string Comment { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-
-        // FK to Order
-        public int OrderID { get; set; }
-        public virtual Order Order { get; set; }
+        // Navigation Property
+        public virtual User User { get; set; }
     }
+
 
 }

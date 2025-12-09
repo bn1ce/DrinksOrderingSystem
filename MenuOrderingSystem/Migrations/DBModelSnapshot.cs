@@ -93,19 +93,34 @@ namespace MenuOrderingSystem.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("FeedbackTime")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("MemberEmail")
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Name")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
+                    b.Property<string>("UserEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(100)");
+
                     b.HasKey("FeedbackID");
 
                     b.HasIndex("MemberEmail");
+
+                    b.HasIndex("UserEmail");
 
                     b.ToTable("Feedbacks");
                 });
@@ -249,13 +264,17 @@ namespace MenuOrderingSystem.Migrations
 
             modelBuilder.Entity("MenuOrderingSystem.Models.Feedback", b =>
                 {
-                    b.HasOne("MenuOrderingSystem.Models.Member", "Member")
+                    b.HasOne("MenuOrderingSystem.Models.Member", null)
                         .WithMany("Feedbacks")
-                        .HasForeignKey("MemberEmail")
+                        .HasForeignKey("MemberEmail");
+
+                    b.HasOne("MenuOrderingSystem.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserEmail")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Member");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MenuOrderingSystem.Models.Order", b =>

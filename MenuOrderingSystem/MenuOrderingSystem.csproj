@@ -7,14 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\**" />
     <Compile Remove="Images\**" />
+    <Content Remove="Data\**" />
     <Content Remove="Images\**" />
+    <EmbeddedResource Remove="Data\**" />
     <EmbeddedResource Remove="Images\**" />
+    <None Remove="Data\**" />
     <None Remove="Images\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\" />
     <Folder Include="Migrations\" />
     <Folder Include="wwwroot\video\" />
     <Folder Include="wwwroot\photos\" />
