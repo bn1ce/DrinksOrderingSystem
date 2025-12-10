@@ -1,0 +1,85 @@
+﻿@model MenuOrderingSystem.Models.ViewModels.FeedbackVM
+
+@{
+    ViewBag.Title = "Feedback";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+
+    <!-- Page Title -->
+    <h2 class="text-center mb-5" style="font-family:'Segoe UI', sans-serif; font-weight:700; color:#2c3e50;">
+        📝 Customer Feedback
+    </h2>
+
+    <!-- Feedback Form -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-6">
+            <form asp-action="Create" method="post">
+                <div class="form-group mb-3">
+                    <label asp-for="Rating"></label>
+                    <input asp-for="Rating" class="form-control" type="number" min="1" max="10" />
+                    <span asp-validation-for="Rating" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Comment"></label>
+                    <textarea asp-for="Comment" class="form-control" rows="4" placeholder="Write your comments here..."></textarea>
+                    <span asp-validation-for="Comment" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-success w-100">Submit Feedback</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Existing Feedbacks -->
+    <h3 class="text-center mb-4" style="font-weight:600; color:#2c3e50;">Previous Feedbacks</h3>
+    <div id="feedback-container" class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="list-group">
+                @if (ViewBag.Feedbacks != null)
+                {
+                    foreach (var fb in ViewBag.Feedbacks as List<MenuOrderingSystem.Models.Feedback>)
+                    {
+                        <div class="list-group-item mb-3 shadow-sm">
+                            <div class="d-flex justify-content-between">
+                                <strong>@fb.Name</strong>
+                                <span class="badge bg-primary">@fb.Rating/10</span>
+                            </div>
+                            <p class="mb-1">@(!string.IsNullOrEmpty(fb.Comment) ? fb.Comment : "No comment")</p>
+                            <small class="text-muted">@fb.FeedbackTime.ToString("g")</small>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-center text-muted">No feedback yet.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Custom Styling -->
+<style>
+    .list-group-item {
+        border-radius: 12px;
+        background-color: #f8f9fa;
+        transition: 0.3s;
+    }
+
+        .list-group-item:hover {
+            background-color: #e2e6ea;
+        }
+
+    label {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .badge {
+        font-size: 0.9rem;
+    }
+</style>

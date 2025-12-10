@@ -35,4 +35,10 @@
     <PackageReference Include="Stripe.net" Version="48.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="DB.mdf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

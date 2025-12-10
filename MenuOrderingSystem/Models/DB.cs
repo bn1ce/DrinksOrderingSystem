@@ -23,7 +23,7 @@ namespace MenuOrderingSystem.Models
         public DbSet<User> Users { get; set; }
         public DbSet<Member> Members { get; set; }
         public DbSet<Admin> Admins { get; set; }
-        public DbSet<Feedback> Feedbacks { get; set; }
+        public DbSet<Feedback> Feedback { get; set; }
 
     }
 
@@ -161,13 +161,13 @@ namespace MenuOrderingSystem.Models
     }
 
 
-
-    public class Feedback
+public class Feedback
     {
-        public int FeedbackID { get; set; }   // Primary Key
+        public int FeedbackID { get; set; }
 
         [Required, MaxLength(100)]
-        public string Email { get; set; }     // Foreign Key to User
+        [Column("Email")]          // maps to existing Email column in DB
+        public string MemberEmail { get; set; }
 
         [Required, MaxLength(100)]
         public string Name { get; set; }
@@ -175,13 +175,13 @@ namespace MenuOrderingSystem.Models
         public DateTime FeedbackTime { get; set; } = DateTime.Now;
 
         [Range(1, 10)]
-        public int Rating { get; set; }       // 1–10 rating
+        public int Rating { get; set; }
 
         [StringLength(500)]
-        public string Comment { get; set; }
+        public string? Comment { get; set; }
 
-        // Navigation Property
-        public virtual User User { get; set; }
+        [ForeignKey("MemberEmail")]   // explicitly link navigation property
+        public virtual Member Member { get; set; }
     }
 
 

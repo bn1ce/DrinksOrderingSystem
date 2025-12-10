@@ -107,6 +107,16 @@ namespace MenuOrderingSystem.Models.ViewModels
         public decimal TotalAmount { get; set; }
     }
 
+    public class FeedbackVM
+    {
+        [Range(1, 10)]
+        [Required(ErrorMessage = "Rating is required.")]
+        [Display(Name = "Rating (1-10)")]
+        public int Rating { get; set; }
 
+        [StringLength(500)]
+        [Display(Name = "Comment")]
+        public string? Comment { get; set; }
+    }
 
 }
