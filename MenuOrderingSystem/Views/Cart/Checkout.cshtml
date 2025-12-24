@@ -1,50 +1,123 @@
 ﻿@model MenuOrderingSystem.Models.ViewModels.CheckoutViewModel
 
 @{
-    ViewBag.Title = "Payment";
+    ViewBag.Title = "Secure Checkout";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container mt-5">
-    <h2 class="mb-4 text-center">💳 Payment Page</h2>
+<div class="container py-5">
+    <div class="row g-5">
 
-    <!-- Order Summary -->
-    <div class="card shadow-sm mb-4">
-        <div class="card-header bg-success text-white">
-            <h5 class="mb-0">Order Summary</h5>
+        <div class="col-lg-8">
+            <div class="d-flex align-items-center mb-4">
+                <h2 class="fw-bold mb-0" style="font-family: 'Playfair Display', serif;">Review Order</h2>
+                <span class="badge bg-success ms-3 rounded-pill px-3">@Model.Items.Sum(i => i.Quantity) Items</span>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4">
+                <div class="card-header bg-white p-4 border-bottom">
+                    <h5 class="fw-bold mb-0 text-muted small text-uppercase">Items in your bag</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <tbody>
+                                @foreach (var item in Model.Items)
+                                {
+                                    <tr>
+                                        <td class="p-4">
+                                            <div class="d-flex align-items-center">
+                                                <div class="position-relative me-3">
+                                                    <img src="~/drinks/@item.Drink.ImageURL"
+                                                         alt="@item.DrinkName"
+                                                         class="rounded-3 shadow-sm"
+                                                         style="width: 80px; height: 80px; object-fit: cover;">
+                                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary border border-white">
+                                                        @item.Quantity
+                                                    </span>
+                                                </div>
+
+                                                <div>
+                                                    <h6 class="fw-bold text-dark mb-1">@item.DrinkName</h6>
+                                                    <div class="small text-muted">
+                                                        <span>Size: @item.Size</span> <span class="mx-1">•</span>
+                                                        <span>Sugar: @item.SugarLevel</span> <span class="mx-1">•</span>
+                                                        <span>Ice: @item.IceLevel</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        <td class="text-end p-4 fw-bold text-dark fs-5">
+                                            @item.Subtotal.ToString("C")
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <a href="/Cart/ShoppingCart" class="text-muted text-decoration-none hover-gold small fw-bold">
+                <i class="fas fa-arrow-left me-2"></i> Return to Cart
+            </a>
         </div>
-        <div class="card-body">
-            <table class="table table-striped text-center align-middle">
-                <thead>
-                    <tr>
-                        <th>Drink</th>
-                        <th>Qty</th>
-                        <th>Price</th>
-                        <th>Subtotal</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.Items)
-                    {
-                        <tr>
-                            <td>@item.DrinkName (@item.Size)</td>
-                            <td>@item.Quantity</td>
-                            <td>@item.Price.ToString("C")</td>
-                            <td>@item.Subtotal.ToString("C")</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
 
-            <!-- Total -->
-            <div class="text-end">
-                <h4>Total: <span class="text-success">@Model.TotalAmount.ToString("C")</span></h4>
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-lg rounded-4 text-white position-sticky" style="top: 100px; background: linear-gradient(135deg, var(--chagee-green), #1a3c1e);">
+
+                <div class="card-header border-0 bg-transparent pt-4 pb-0">
+                    <h4 class="fw-bold" style="font-family: 'Playfair Display', serif;">Order Summary</h4>
+                </div>
+
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between mb-2 text-white-50">
+                        <span>Subtotal</span>
+                        <span>@Model.TotalAmount.ToString("C")</span>
+                    </div>
+
+                    <hr class="border-white opacity-25">
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <span class="fs-5">Total to Pay</span>
+                        <span class="display-6 fw-bold">@Model.TotalAmount.ToString("C")</span>
+                    </div>
+
+                    <form asp-controller="Checkout" asp-action="CreateCheckoutSession" method="post">
+                        <button type="submit" class="btn btn-light w-100 py-3 rounded-pill fw-bold text-success shadow hover-scale mb-3">
+                            <i class="fas fa-lock me-2"></i> Pay Securely
+                        </button>
+                    </form>
+
+                    <div class="text-center text-white-50 small mt-3">
+                        <p class="mb-2">We accept</p>
+                        <div class="d-flex justify-content-center gap-3 fs-4">
+                            <i class="fab fa-cc-visa"></i>
+                            <i class="fab fa-cc-mastercard"></i>
+                            <i class="fab fa-cc-amex"></i>
+                            <i class="fab fa-stripe"></i>
+                        </div>
+                        <div class="mt-3">
+                            <i class="fas fa-shield-alt me-1"></i> SSL Encrypted Payment
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+
     </div>
-                <!-- Proceed Button -->
-                <div class="d-grid gap-2 mt-4">
-                    <form asp-controller="Checkout" asp-action="CreateCheckoutSession" method="post">
-                        <button type="submit" class="btn btn-success">Pay with Stripe</button>
-                    </form>
 </div>
+
+<style>
+    .hover-gold:hover {
+        color: var(--chagee-gold) !important;
+        text-decoration: underline !important;
+    }
+
+    .hover-scale:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2) !important;
+        transition: 0.3s;
+    }
+</style>

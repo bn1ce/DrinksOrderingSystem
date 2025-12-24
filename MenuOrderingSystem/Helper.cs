@@ -177,17 +177,27 @@ public class Helper
         string host = cf["Smtp:Host"] ?? "";
         int port = cf.GetValue<int>("Smtp:Port");
 
+        // Force the "From" address to match the authenticated user
+        // (Google requires this to match your login email)
         mail.From = new MailAddress(user, name);
 
         using var smtp = new SmtpClient
         {
             Host = host,
             Port = port,
-            EnableSsl = true,
+            EnableSsl = true, // Critical for Gmail
             Credentials = new NetworkCredential(user, pass),
         };
 
-        smtp.Send(mail);
+        try
+        {
+            smtp.Send(mail);
+        }
+        catch (Exception ex)
+        {
+            // TEMPORARY: Throw the error so you can see it on the browser screen
+            throw new Exception("Email Failed: " + ex.Message);
+        }
     }
 
 

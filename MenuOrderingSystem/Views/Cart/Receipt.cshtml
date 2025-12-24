@@ -1,57 +1,130 @@
 ﻿@model MenuOrderingSystem.Models.Order
 
 @{
-    ViewBag.Title = "Receipt";
+    ViewBag.Title = "Payment Successful";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container mt-5">
-    <div class="card shadow-lg p-4">
-        <h2 class="text-center text-success mb-4">✅ Payment Successful</h2>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
 
-        <h4>Receipt</h4>
-        <p><strong>Order ID:</strong> @Model.OrderID</p>
-        <p><strong>Date:</strong> @Model.OrderTime.ToString("dd MMM yyyy HH:mm")</p>
-        <p><strong>Status:</strong> Paid</p>
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden position-relative">
+                <div class="position-absolute top-0 start-0 w-100" style="height: 6px; background: linear-gradient(90deg, var(--chagee-gold), var(--chagee-green));"></div>
 
-        <hr />
+                <div class="card-body p-5 text-center">
 
-        <table class="table table-bordered text-center">
-            <thead class="table-light">
-                <tr>
-                    <th>Drink</th>
-                    <th>Size</th>
-                    <th>Qty</th>
-                    <th>Price</th>
-                    <th>Subtotal</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.OrderItems)
-                {
-                    decimal unitPrice = item.Size.ToLower() == "large"
-                    ? item.Drink.PriceLarge
-                    : item.Drink.PriceRegular;
+                    <div class="mb-4">
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle shadow-sm"
+                             style="width: 80px; height: 80px; background-color: #f0fdf4;">
+                            <i class="fas fa-check fa-3x" style="color: var(--chagee-green);"></i>
+                        </div>
+                    </div>
 
-                    <tr>
-                        <td>@item.Drink.Name</td>
-                        <td>@item.Size</td>
-                        <td>@item.Quantity</td>
-                        <td>@unitPrice.ToString("C")</td>
-                        <td>@(item.Quantity* unitPrice)</td>
-                    </tr>
-                }
-            </tbody>
+                    <h2 class="fw-bold mb-2" style="font-family: 'Playfair Display', serif;">Payment Successful!</h2>
+                    <p class="text-muted mb-4">Thank you for your order. We are preparing it now.</p>
 
-        </table>
+                    <div class="bg-light rounded-4 p-4 mb-4 text-start">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted small text-uppercase fw-bold">Order ID</span>
+                            <span class="fw-bold text-dark">#@Model.OrderID</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted small text-uppercase fw-bold">Date</span>
+                            <span class="text-dark">@Model.OrderTime.ToString("dd MMM yyyy, hh:mm tt")</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted small text-uppercase fw-bold">Payment Status</span>
+                            <span class="text-success fw-bold"><i class="fas fa-check-circle me-1"></i> Paid</span>
+                        </div>
+                    </div>
 
-        <div class="text-end">
-            <h4>Total: <span class="text-success">@Model.TotalAmount.ToString("C")</span></h4>
-        </div>
+                    <div class="text-start mb-4">
+                        <h6 class="text-muted small text-uppercase fw-bold mb-3 border-bottom pb-2">Order Summary</h6>
 
-        <div class="text-center mt-4">
-            <a href="/History" class="btn btn-primary">📦 View My Orders</a>
-            <a href="/Home/Index" class="btn btn-outline-secondary">🛍️ Continue Shopping</a>
+                        @foreach (var item in Model.OrderItems)
+                        {
+                            decimal unitPrice = item.Size.ToLower() == "large" ? item.Drink.PriceLarge : item.Drink.PriceRegular;
+
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="~/drinks/@item.Drink.ImageURL"
+                                     alt="@item.Drink.Name"
+                                     class="rounded-3 shadow-sm me-3"
+                                     style="width: 50px; height: 50px; object-fit: cover;">
+
+                                <div class="flex-grow-1">
+                                    <div class="fw-bold text-dark">@item.Drink.Name</div>
+                                    <div class="small text-muted">
+                                        @item.Size &bull; Qty: @item.Quantity
+                                    </div>
+                                </div>
+
+                                <div class="fw-bold text-dark">
+                                    @((item.Quantity * unitPrice).ToString("C"))
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="border-top border-dashed my-3"></div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-5">
+                        <span class="fs-5 text-muted">Total Paid</span>
+                        <span class="display-6 fw-bold" style="color: var(--chagee-green);">
+                            @Model.TotalAmount.ToString("C")
+                        </span>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <a href="/History" class="btn btn-success rounded-pill py-3 fw-bold shadow-sm hover-scale"
+                           style="background-color: var(--chagee-green); border: none;">
+                            <i class="fas fa-receipt me-2"></i> View My Orders
+                        </a>
+
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <a href="/Home/Index" class="btn btn-outline-secondary w-100 rounded-pill py-2">
+                                    Home
+                                </a>
+                            </div>
+                            <div class="col-6">
+                                <button onclick="window.print()" class="btn btn-outline-secondary w-100 rounded-pill py-2">
+                                    <i class="fas fa-print me-2"></i> Print
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<style>
+    .border-dashed {
+        border-top-style: dashed !important;
+        border-color: #ddd;
+    }
+
+    .hover-scale:hover {
+        transform: translateY(-2px);
+        transition: 0.3s;
+    }
+
+    /* Hide buttons when printing */
+    @@media print {
+        header, footer, .btn, .d-grid {
+            display: none !important;
+        }
+
+        .card {
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        body {
+            background: white !important;
+        }
+    }
+</style>

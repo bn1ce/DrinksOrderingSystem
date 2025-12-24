@@ -241,11 +241,35 @@
 
     @RenderSection("foot", false)
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     @if (TempData["CartMessage"] != null)
     {
         <script>
             document.addEventListener("DOMContentLoaded", function () {
-                alert("@TempData["CartMessage"]");
+                Swal.fire({
+                    title: 'Added to Cart!',
+                    text: '@Html.Raw(TempData["CartMessage"])',
+                    icon: 'success',
+                    iconColor: '#2d5a27', // CHAGEE Green
+
+                    // Button Styling
+                    confirmButtonText: 'Continue Shopping',
+                    confirmButtonColor: '#2d5a27',
+
+                    showCancelButton: true,
+                    cancelButtonText: 'View Cart',
+                    cancelButtonColor: '#c5a059', // Gold
+
+                    // Animation
+                    showClass: { popup: 'animate__animated animate__fadeInDown' },
+                    hideClass: { popup: 'animate__animated animate__fadeOutUp' }
+                }).then((result) => {
+                    // Redirect to Cart if they click "View Cart"
+                    if (result.dismiss === Swal.DismissReason.cancel) {
+                        window.location.href = '/Cart/ShoppingCart';
+                    }
+                });
             });
         </script>
     }

@@ -30,7 +30,7 @@ public class CartController : Controller
         if (cart.ContainsKey(DrinkID))
         {
             cart.Remove(DrinkID);
-            hp.SetCart(cart); // FORCE SAVE TO SESSION
+            hp.SetCart(cart); 
         }
 
         // 4. Re-fetch and Hydrate for display
@@ -179,21 +179,26 @@ public class CartController : Controller
         var cart = hp.GetCart();
         if (!cart.Any()) return RedirectToAction("ShoppingCart");
 
+        // Re-populate drink details (Images, Names) for the Checkout view
+        foreach (var item in cart.Values)
+        {
+            var drink = db.Drinks.Find(item.DrinkID);
+            if (drink != null)
+            {
+                item.Drink = drink; // This loads the ImageURL
+                                    // Ensure price consistency
+                item.Price = item.Size == "Large" ? drink.PriceLarge : drink.PriceRegular;
+                item.Subtotal = item.Quantity * item.Price;
+            }
+        }
+
         var vm = new CheckoutViewModel
         {
             Items = cart.Values.ToList(),
-            TotalAmount = cart.Sum(c =>
-            {
-                var drink = db.Drinks.Find(c.Key);
-                if (drink == null) return 0;
-
-                // Choose price based on size
-                decimal unitPrice = c.Value.Size.ToLower() == "large" ? drink.PriceLarge : drink.PriceRegular;
-                return c.Value.Quantity * unitPrice;
-            })
+            TotalAmount = cart.Sum(c => c.Value.Subtotal)
         };
 
-        return View(vm); // Views/Cart/Checkout.cshtml
+        return View(vm);
     }
 
 

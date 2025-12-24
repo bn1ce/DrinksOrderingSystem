@@ -16,11 +16,18 @@
 
 @section foot {
     <script>
-        // Keep your existing auto-submit logic
-        $(document).on('change', 'select', e => {
-            // Optional: Add a loading state opacity
+        // 1. Auto-submit form when dropdown changes
+        $(document).on('change', 'select', function(e) {
+            // Fade out to show "Loading..."
             $('#target').css('opacity', '0.5');
             $(e.target.form).submit();
+        });
+
+        // 2. NEW: Detect when ANY Ajax request finishes (Update or Delete)
+        // This runs automatically after the cart table refreshes
+        $(document).ajaxComplete(function() {
+            // Fade back in to full visibility
+            $('#target').fadeTo(200, 1);
         });
     </script>
 }

@@ -5,59 +5,158 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container mt-5">
-    <div class="card shadow-lg p-4">
-        <h2 class="text-center text-primary mb-4">📑 Order Details</h2>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
 
-        <p><strong>Order ID:</strong> @Model.OrderID</p>
-        <p><strong>Date:</strong> @Model.OrderTime.ToString("dd MMM yyyy HH:mm")</p>
-        <p><strong>Status:</strong> @Model.Status</p>
+            <div class="mb-4">
+                <a href="/History/Index" class="text-decoration-none text-muted hover-gold">
+                    <i class="fas fa-arrow-left me-2"></i> Back to History
+                </a>
+            </div>
 
-        <hr />
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
 
-        <table class="table table-bordered text-center">
-            <thead class="table-light">
-                <tr>
-                    <th>Drink</th>
-                    <th>Size</th>
-                    <th>Sugar</th>
-                    <th>Ice</th>
-                    <th>Qty</th>
-                    <th>Price</th>
-                    <th>Subtotal</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.OrderItems)
-                {
-                    var price = item.Size == "Large"
-                    ? item.Drink.PriceLarge
-                    : item.Drink.PriceRegular;
+                <div class="card-header bg-white border-bottom p-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div>
+                        <small class="text-uppercase text-muted fw-bold" style="letter-spacing: 1px;">Order Receipt</small>
+                        <h3 class="fw-bold mb-0 text-dark">#@Model.OrderID</h3>
+                        <span class="text-muted small">
+                            <i class="far fa-calendar-alt me-1"></i> @Model.OrderTime.ToString("dd MMM yyyy, hh:mm tt")
+                        </span>
+                    </div>
 
-                    <tr>
-                        <td>@item.Drink.Name</td>
-                        <td>@item.Size</td>
-                        <td>@item.SugarLevel</td>
-                        <td>@item.IceLevel</td>
-                        <td>@item.Quantity</td>
-                        <td>RM @price.ToString("N2")</td>
-                        <td>RM @(item.Quantity* price)</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                    <div>
+                        @if (Model.Status == "Paid")
+                        {
+                            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-4 py-2 fs-6 border border-success">
+                                <i class="fas fa-check-circle me-1"></i> Paid
+                            </span>
+                        }
+                        else if (Model.Status == "Cancelled")
+                        {
+                            <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-4 py-2 fs-6 border border-danger">
+                                <i class="fas fa-times-circle me-1"></i> Cancelled
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning bg-opacity-10 text-dark rounded-pill px-4 py-2 fs-6 border border-warning">
+                                @Model.Status
+                            </span>
+                        }
+                    </div>
+                </div>
 
-        <div class="text-end">
-            <h4>Total: <span class="text-success">RM @Model.TotalAmount</span></h4>
-        </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="bg-light text-uppercase small text-muted">
+                                <tr>
+                                    <th class="py-3 ps-4" style="width: 50%;">Item Description</th>
+                                    <th class="py-3 text-center">Qty</th>
+                                    <th class="py-3 text-end pe-4">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.OrderItems)
+                                {
+                                    // Calculate snapshot price based on logic provided
+                                    var unitPrice = item.Size == "Large" ? item.Drink.PriceLarge : item.Drink.PriceRegular;
 
-        <div class="text-center mt-4">
-            <a asp-controller="History" asp-action="Index" class="btn btn-secondary">
-                ⬅ Back to History
-            </a>
-            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary">
-                🛍️ Continue Shopping
-            </a>
+                                    <tr>
+                                        <td class="ps-4 py-3">
+                                            <div class="d-flex align-items-center">
+                                                <img src="~/drinks/@item.Drink.ImageURL"
+                                                     alt="@item.Drink.Name"
+                                                     class="rounded-3 shadow-sm me-3"
+                                                     style="width: 60px; height: 60px; object-fit: cover;">
+
+                                                <div>
+                                                    <h6 class="fw-bold mb-1 text-dark">@item.Drink.Name</h6>
+                                                    <div class="d-flex flex-wrap gap-1">
+                                                        <span class="badge bg-light text-dark border fw-normal">@item.Size</span>
+                                                        <span class="badge bg-light text-dark border fw-normal">@item.SugarLevel</span>
+                                                        <span class="badge bg-light text-dark border fw-normal">@item.IceLevel</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+
+                                        <td class="text-center text-muted fw-bold">
+                                            x @item.Quantity
+                                        </td>
+
+                                        <td class="text-end pe-4">
+                                            <div class="fw-bold text-dark">RM @((item.Quantity * unitPrice).ToString("N2"))</div>
+                                            <small class="text-muted d-block" style="font-size: 0.75rem;">
+                                                RM @unitPrice.ToString("N2") / each
+                                            </small>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-light p-4">
+                    <div class="row justify-content-end">
+                        <div class="col-md-5">
+                            <div class="d-flex justify-content-between mb-2 text-muted">
+                                <span>Subtotal</span>
+                                <span>RM @Model.TotalAmount.ToString("N2")</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-3 text-muted">
+                                <span>Tax (0%)</span>
+                                <span>RM 0.00</span>
+                            </div>
+                            <hr class="text-muted opacity-25">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fs-5 fw-bold text-dark">Grand Total</span>
+                                <span class="fs-4 fw-bold" style="color: var(--chagee-green);">
+                                    RM @Model.TotalAmount.ToString("N2")
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 text-center d-flex justify-content-center gap-3">
+                <a href="/Drink/Index" class="btn btn-outline-success rounded-pill px-4 py-2 hover-scale">
+                    <i class="fas fa-shopping-bag me-2"></i> Order Again
+                </a>
+                <button onclick="window.print()" class="btn btn-link text-muted text-decoration-none">
+                    <i class="fas fa-print me-2"></i> Print Receipt
+                </button>
+            </div>
+
         </div>
     </div>
 </div>
+
+<style>
+    /* Styling for the custom hover link */
+    .hover-gold:hover {
+        color: var(--chagee-gold) !important;
+        text-decoration: underline !important;
+    }
+
+    .hover-scale:hover {
+        transform: translateY(-2px);
+        transition: transform 0.2s;
+    }
+
+    /* Print Styles: Hide buttons when printing */
+    @@media print {
+        header, footer, .btn, .breadcrumb, .mb-4 {
+            display: none !important;
+        }
+
+        .card {
+            border: none !important;
+            shadow: none !important;
+        }
+    }
+</style>
