@@ -6,73 +6,112 @@
 }
 
 <div class="container py-5">
-    <!-- Top Row: Image + Basic Info -->
-    <div class="row mb-4">
-        <!-- Image -->
-        <div class="col-md-5 text-center">
-            <img img src="~/drinks/@(Model.ImageURL)"
-                 asp-append-version="true"
-                 class="img-fluid rounded shadow"
-                 style="max-height:400px; object-fit:cover;" />
+    <div class="row align-items-center">
+
+        <div class="col-lg-6 mb-5 mb-lg-0 text-center">
+            <div class="position-relative d-inline-block">
+                <div class="position-absolute top-50 start-50 translate-middle bg-success opacity-10 rounded-circle"
+                     style="width: 80%; height: 80%; filter: blur(50px); z-index: -1;"></div>
+
+                <img src="~/drinks/@Model.ImageURL"
+                     class="img-fluid rounded-4 shadow-lg"
+                     style="max-height: 500px; object-fit: cover; z-index: 2;"
+                     alt="@Model.Name" />
+            </div>
         </div>
 
-        <!-- Name + Description -->
-        <div class="col-md-7 d-flex flex-column justify-content-center">
-            <h2 class="fw-bold">@Model.Name</h2>
-            <p class="text-muted">@Model.Description</p>
-        </div>
-    </div>
-
-    <!-- Second Row: Options & Add to Cart -->
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
+        <div class="col-lg-6">
             <form method="post" asp-action="UpdateCart" asp-controller="Cart">
                 <input type="hidden" name="drinkId" value="@Model.DrinkID" />
 
-                <!-- Size -->
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Size</label>
-                    <select name="size" class="form-select">
-                        <option value="Regular">Regular - RM @Model.PriceRegular.ToString("0.00")</option>
-                        <option value="Large">Large - RM @Model.PriceLarge.ToString("0.00")</option>
-                    </select>
+                <h1 class="display-5 fw-bold mb-2">@Model.Name</h1>
+                <p class="text-muted fs-5 mb-4">@Model.Description</p>
+                <hr class="border-light my-4">
+
+                <div class="mb-4">
+                    <label class="fw-bold small text-uppercase text-muted mb-2">Select Size</label>
+                    <div class="d-flex gap-2">
+                        <input type="radio" class="btn-check" name="size" id="sizeReg" value="Regular" checked>
+                        <label class="btn btn-outline-success px-4 py-2 rounded-4 w-50" for="sizeReg" style="border-color: #ddd; color: #444;">
+                            <div class="small text-muted">Regular</div>
+                            <div class="fw-bold fs-5">RM @Model.PriceRegular.ToString("0.00")</div>
+                        </label>
+
+                        <input type="radio" class="btn-check" name="size" id="sizeLrg" value="Large">
+                        <label class="btn btn-outline-success px-4 py-2 rounded-4 w-50" for="sizeLrg" style="border-color: #ddd; color: #444;">
+                            <div class="small text-muted">Large</div>
+                            <div class="fw-bold fs-5">RM @Model.PriceLarge.ToString("0.00")</div>
+                        </label>
+                    </div>
                 </div>
 
-                <!-- Ice Level -->
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Ice Level</label>
-                    <select name="iceLevel" class="form-select">
-                        <option>No Ice</option>
-                        <option>Less Ice</option>
-                        <option>Normal Ice</option>
-                        <option>Extra Ice</option>
-                    </select>
+                <div class="mb-4">
+                    <label class="fw-bold small text-uppercase text-muted mb-2">Ice Level</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach (var ice in new[] { "No Ice", "Less Ice", "Normal Ice", "Extra Ice" })
+                        {
+                            var id = "ice" + ice.Replace(" ", "");
+                            <input type="radio" class="btn-check" name="iceLevel" id="@id" value="@ice" @(ice == "Normal Ice" ? "checked" : "")>
+                            <label class="btn btn-outline-secondary rounded-pill btn-sm px-3 py-2" for="@id">@ice</label>
+                        }
+                    </div>
                 </div>
 
-                <!-- Sugar Level -->
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Sugar Level</label>
-                    <select name="sugarLevel" class="form-select">
-                        <option>0%</option>
-                        <option>25%</option>
-                        <option>50%</option>
-                        <option>75%</option>
-                        <option>100%</option>
-                    </select>
+                <div class="mb-4">
+                    <label class="fw-bold small text-uppercase text-muted mb-2">Sugar Level</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach (var sugar in new[] { "0%", "25%", "50%", "75%", "100%" })
+                        {
+                            var id = "sugar" + sugar.Replace("%", "");
+                            <input type="radio" class="btn-check" name="sugarLevel" id="@id" value="@sugar" @(sugar == "50%" ? "checked" : "")>
+                            <label class="btn btn-outline-secondary rounded-pill btn-sm px-3 py-2" for="@id">@sugar</label>
+                        }
+                    </div>
                 </div>
 
-                <!-- Quantity -->
-                <div class="mb-3">
-                    <label class="form-label fw-bold">Quantity</label>
-                    <input type="number" name="quantity" value="1" min="1"
-                           class="form-control" style="max-width:120px;" />
+                <div class="d-flex gap-3 align-items-center mt-5 p-3 bg-light rounded-4">
+                    <div class="d-flex align-items-center bg-white rounded-pill px-3 py-1 border shadow-sm">
+                        <button type="button" class="btn btn-link text-dark text-decoration-none p-0" onclick="updateQty(-1)"><i class="fas fa-minus small"></i></button>
+                        <input type="number" name="quantity" id="qtyInput" value="1" min="1" class="form-control border-0 text-center p-0 fw-bold mx-2" style="width: 40px; background: transparent;">
+                        <button type="button" class="btn btn-link text-dark text-decoration-none p-0" onclick="updateQty(1)"><i class="fas fa-plus small"></i></button>
+                    </div>
+
+                    <button type="submit" class="btn btn-success w-100 rounded-pill py-3 fw-bold shadow hover-lift" style="background-color: var(--chagee-green); border: none;">
+                        Add to Order
+                    </button>
                 </div>
 
-                <!-- Submit -->
-                <button type="submit" class="btn btn-success btn-lg w-100">
-                    🛒 Add to Cart
-                </button>
             </form>
         </div>
     </div>
 </div>
+
+<style>
+    .btn-check:checked + .btn-outline-success {
+        background-color: #f0fdf4 !important;
+        border-color: var(--chagee-green) !important;
+        color: var(--chagee-green) !important;
+    }
+
+    .btn-check:checked + .btn-outline-secondary {
+        background-color: var(--chagee-dark) !important;
+        color: white !important;
+        border-color: var(--chagee-dark) !important;
+    }
+
+    /* Remove number spinner arrows */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+</style>
+
+<script>
+    function updateQty(change) {
+        var input = document.getElementById('qtyInput');
+        var val = parseInt(input.value) + change;
+        if (val < 1) val = 1;
+        input.value = val;
+    }
+</script>

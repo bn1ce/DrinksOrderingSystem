@@ -17,6 +17,41 @@ public class CartController : Controller
         this.hp = hp;
     }
 
+    [HttpPost]
+    public IActionResult RemoveFromCart(int DrinkID)
+    {
+        // 1. Get current cart
+        var cart = hp.GetCart();
+
+        // 2. Remove the item if it exists
+        // Note: Currently removing by DrinkID. 
+        if (cart.ContainsKey(DrinkID))
+        {
+            cart.Remove(DrinkID);
+            hp.SetCart(cart);
+        }
+
+        // 3. Re-fetch the list for the Partial View (to refresh the UI)
+        var items = cart.Values.ToList();
+
+        // We must re-populate the Drink details (Name, Image, etc.) from DB
+        // because Session usually only stores the basic data.
+        foreach (var item in items)
+        {
+            var drink = db.Drinks.Find(item.DrinkID);
+            if (drink != null)
+            {
+                item.Drink = drink;
+                item.DrinkName = drink.Name;
+                // Recalculate price just in case
+                item.Price = item.Size == "Large" ? drink.PriceLarge : drink.PriceRegular;
+                item.Subtotal = item.Quantity * item.Price;
+            }
+        }
+
+        // 4. Return the updated list to the specific part of the page
+        return PartialView("_ShoppingCart", items);
+    }
 
     // POST: Product/UpdateCart
     [HttpPost]
@@ -27,15 +62,17 @@ public class CartController : Controller
         var drink = db.Drinks.Find(drinkId);
         if (drink == null) return Redirect(Request.Headers["Referer"].ToString());
 
-        // pick price based on size
+        // 1. Calculate Price based on Size
         decimal price = 0;
         if (size == "Regular")
             price = drink.PriceRegular;
         else if (size == "Large")
             price = drink.PriceLarge;
 
+        // 2. Update or Remove Logic
         if (quantity >= 1 && quantity <= 10)
         {
+            // Update/Add the item
             cart[drinkId] = new CartItem
             {
                 DrinkID = drinkId,
@@ -44,20 +81,51 @@ public class CartController : Controller
                 IceLevel = iceLevel,
                 SugarLevel = sugarLevel,
                 Quantity = quantity,
-                Price = price, // ✅ correct price by size
-                Subtotal = quantity * price // ✅ correct subtotal
+                Price = price,
+                Subtotal = quantity * price
             };
 
-            TempData["CartMessage"] = $"{drink.Name} ({size}) added to cart!";
-
+            // Only set the notification if it's NOT an AJAX update (to avoid spamming toasts)
+            if (!Request.IsAjax())
+            {
+                TempData["CartMessage"] = $"{drink.Name} ({size}) updated!";
+            }
         }
         else
         {
+            // Remove if quantity is invalid or 0
             cart.Remove(drinkId);
         }
 
+        // 3. Save to Session
         hp.SetCart(cart);
 
+        // 4. Check for AJAX (The Fix)
+        if (Request.IsAjax())
+        {
+            // Re-fetch the list to display in the partial view
+            var items = cart.Values.ToList();
+
+            // Re-populate Drink details (Images, Names) for the UI
+            foreach (var item in items)
+            {
+                var d = db.Drinks.Find(item.DrinkID);
+                if (d != null)
+                {
+                    item.Drink = d; // Necessary for ImageURL in the View
+                    item.DrinkName = d.Name;
+
+                    // Ensure price consistency for display
+                    item.Price = item.Size == "Large" ? d.PriceLarge : d.PriceRegular;
+                    item.Subtotal = item.Quantity * item.Price;
+                }
+            }
+
+            // Return the Partial View (Updates the table only, no page reload)
+            return PartialView("_ShoppingCart", items);
+        }
+
+        // Fallback for non-JS browsers
         return Redirect(Request.Headers["Referer"].ToString());
     }
 

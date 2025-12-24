@@ -5,32 +5,34 @@
     {
         @foreach (var drink in Model)
         {
-            <div class="col-12 col-sm-6 col-lg-4 d-flex">
-                <div class="card shadow-sm border-0 flex-fill" style="border-radius:20px; overflow:hidden;">
-                    <div class="position-relative">
+            <div class="col-6 col-md-4 col-lg-3 d-flex">
+                <div class="card h-100 border-0 shadow-sm hover-lift w-100" style="border-radius: 16px; overflow: hidden; transition: transform 0.3s, box-shadow 0.3s;">
+
+                    <div class="position-relative bg-light">
                         <img src="~/drinks/@drink.ImageURL"
-                             asp-append-version="true"
-                             alt="@drink.Name"
                              class="card-img-top"
-                             style="height:250px; object-fit:cover;" />
-                    </div>
-                    <div class="card-body text-center bg-white">
-                        <h5 class="card-title mb-2" style="font-weight:600; color:#34495e;">
-                            @drink.Name
-                        </h5>
-                        <p class="card-text text-muted small mb-3">
-                            @drink.Description
-                        </p>
-                        <p class="mb-3 fw-semibold" style="color:#27ae60;">
-                            Regular: RM @drink.PriceRegular.ToString("0.00")
-                            <span class="text-muted"> | </span>
-                            Large: RM @drink.PriceLarge.ToString("0.00")
-                        </p>
+                             alt="@drink.Name"
+                             style="height: 220px; object-fit: cover; width: 100%;">
+
                         <a href="/Drink/Details?id=@drink.DrinkID"
-                           class="btn btn-outline-success px-4 mt-2"
-                           style="border-radius:50px; font-weight:500;">
-                            🛒 Add to Cart
+                           class="btn btn-light rounded-circle shadow position-absolute bottom-0 end-0 m-3 d-flex align-items-center justify-content-center"
+                           style="width: 40px; height: 40px; color: var(--chagee-green);">
+                            <i class="fas fa-plus"></i>
                         </a>
+                    </div>
+
+                    <div class="card-body d-flex flex-column pt-3">
+                        <div class="mb-auto">
+                            <h6 class="fw-bold text-dark mb-1" style="font-family: 'Playfair Display', serif; font-size: 1.1rem;">@drink.Name</h6>
+                            <p class="text-muted small text-truncate" style="max-width: 100%;">@drink.Description</p>
+                        </div>
+
+                        <div class="mt-3">
+                            <small class="text-uppercase text-muted" style="font-size: 0.65rem; letter-spacing: 1px;">Starting From</small>
+                            <div class="fw-bold" style="color: var(--chagee-gold); font-size: 1.1rem;">
+                                RM @drink.PriceRegular.ToString("0.00")
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -38,6 +40,17 @@
     }
     else
     {
-        <p class="text-center text-muted">No drinks found.</p>
+        <div class="col-12 text-center py-5">
+            <div class="text-muted display-4 mb-3 opacity-25"><i class="fas fa-mug-hot"></i></div>
+            <h4>No drinks found</h4>
+            <p class="text-muted">Try adjusting your search filters.</p>
+        </div>
     }
 </div>
+
+<style>
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+    }
+</style>

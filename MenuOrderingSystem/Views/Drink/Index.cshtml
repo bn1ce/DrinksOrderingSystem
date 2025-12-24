@@ -5,67 +5,54 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container py-5">
+<div class="position-relative text-center text-white mb-5"
+     style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('@Url.Content("~/Images/menubg.png")'); background-size: cover; background-position: center; padding: 100px 20px 60px; margin-top: -20px;">
+    <h1 class="display-4 fw-bold mb-2">Discover Oriental Tea</h1>
+    <p class="lead mb-4 opacity-75">Premium Tea • Fresh Milk • Modern Taste</p>
 
-    <!-- Page Title -->
-    <h2 class="text-center mb-5" style="font-family:'Segoe UI', sans-serif; font-weight:700; color:#2c3e50;">
-        🫖 CHAGEE Drink          Menu
-    </h2>
+    <div class="bg-white p-2 rounded-pill shadow-lg d-inline-flex align-items-center flex-wrap justify-content-center mx-auto" style="max-width: 700px; width: 100%;">
+        <i class="fas fa-search text-muted ms-3"></i>
+        <input type="text" name="search" class="form-control border-0 shadow-none" placeholder="Search drinks..." style="min-width: 200px;">
 
-    <!-- Search + Sort -->
-    <div class="d-flex mb-4 justify-content-center">
-        <input type="hidden" name="categoryId" value="@Model.SelectedCategoryId" />
-        <input type="text" name="search" value="" class="form-control me-2" placeholder="Search drinks..." style="max-width:250px;" />
-        <select name="sort" class="form-select" style="max-width:200px;">
+        <select name="sort" class="form-select border-0 shadow-none bg-light rounded-pill ms-2" style="width: auto; font-weight: 600;">
             <option value="">Sort By</option>
             <option value="name-asc">Name A-Z</option>
             <option value="name-desc">Name Z-A</option>
             <option value="price-asc">Price Low → High</option>
             <option value="price-desc">Price High → Low</option>
         </select>
+        <input type="hidden" name="categoryId" value="@Model.SelectedCategoryId" />
     </div>
+</div>
 
-    <!-- Category Tabs -->
-    <ul class="nav nav-pills justify-content-center flex-wrap mb-5" id="drinkCategoryTabs">
-        @foreach (var category in Model.Categories)
-        {
-            bool isActive = category.CategoryID == Model.SelectedCategoryId;
-            <li class="nav-item m-2">
-                <a class="nav-link px-4 py-2 @(isActive ? "active" : "")"
+<div class="container pb-5">
+    <div class="d-flex justify-content-center mb-5 overflow-auto">
+        <div class="nav nav-pills p-1 bg-light rounded-pill" id="drinkCategoryTabs" style="border: 1px solid #eee;">
+            @foreach (var category in Model.Categories)
+            {
+                bool isActive = category.CategoryID == Model.SelectedCategoryId;
+                <a class="nav-link rounded-pill px-4 py-2 fw-bold @(isActive ? "active-tab" : "text-muted")"
                    href="#"
                    data-category="@category.CategoryID"
-                   role="tab">
+                   style="transition: 0.3s;">
                     @category.CategoryName
                 </a>
-            </li>
-        }
-    </ul>
+            }
+        </div>
+    </div>
 
-    <!-- Drinks Container (AJAX loads here) -->
     <div id="drinks-container">
         @Html.Partial("_DrinkList", Model.Drinks)
     </div>
-
 </div>
 
-<!-- Custom Tab Styling -->
 <style>
-    .nav-pills .nav-link {
-        border-radius: 30px;
-        font-weight: 600;
-        background-color: #ecf0f1;
-        color: #2c3e50;
-        transition: 0.3s;
+    /* Custom Active State for Tabs to match Gold/Green theme */
+    .active-tab {
+        background-color: var(--chagee-green) !important;
+        color: white !important;
+        box-shadow: 0 4px 10px rgba(45, 90, 39, 0.3);
     }
-
-        .nav-pills .nav-link:hover {
-            background-color: #d5dbdb;
-        }
-
-        .nav-pills .nav-link.active {
-            background-color: #27ae60 !important;
-            color: white !important;
-        }
 </style>
 
 @section foot {
@@ -76,31 +63,27 @@
             var sort = $("select[name='sort']").val();
             var categoryId = $("input[name='categoryId']").val();
 
-            $.get('@Url.Action("Filter", "Drink")',
-                { categoryId: categoryId, search: search, sort: sort },
-                function (result) {
-                    $("#drinks-container").html(result);
-                });
+            $.get('@Url.Action("Filter", "Drink")', { categoryId: categoryId, search: search, sort: sort }, function (result) {
+                $("#drinks-container").hide().html(result).fadeIn(300);
+            });
         }
 
         $(document).ready(function () {
-            // Search live
-            $("input[name='search']").on("keyup", function () {
-                loadDrinks();
-            });
-
+            // Live Search
+            $("input[name='search']").on("keyup", loadDrinks);
             // Sorting
-            $("select[name='sort']").on("change", function () {
-                loadDrinks();
-            });
+            $("select[name='sort']").on("change", loadDrinks);
 
-            // Category change
+            // Category Click
             $("#drinkCategoryTabs a").on("click", function (e) {
                 e.preventDefault();
                 var categoryId = $(this).data("category");
                 $("input[name='categoryId']").val(categoryId);
-                $("#drinkCategoryTabs a").removeClass("active");
-                $(this).addClass("active");
+
+                // Update UI classes
+                $("#drinkCategoryTabs a").removeClass("active-tab").addClass("text-muted");
+                $(this).removeClass("text-muted").addClass("active-tab");
+
                 loadDrinks();
             });
         });
