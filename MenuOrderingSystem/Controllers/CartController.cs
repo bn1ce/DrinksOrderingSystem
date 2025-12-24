@@ -20,22 +20,22 @@ public class CartController : Controller
     [HttpPost]
     public IActionResult RemoveFromCart(int DrinkID)
     {
-        // 1. Get current cart
+        // 1. Clear State to prevent UI glitches
+        ModelState.Clear();
+
+        // 2. Get current cart
         var cart = hp.GetCart();
 
-        // 2. Remove the item if it exists
-        // Note: Currently removing by DrinkID. 
+        // 3. Remove the item
         if (cart.ContainsKey(DrinkID))
         {
             cart.Remove(DrinkID);
-            hp.SetCart(cart);
+            hp.SetCart(cart); // FORCE SAVE TO SESSION
         }
 
-        // 3. Re-fetch the list for the Partial View (to refresh the UI)
+        // 4. Re-fetch and Hydrate for display
         var items = cart.Values.ToList();
 
-        // We must re-populate the Drink details (Name, Image, etc.) from DB
-        // because Session usually only stores the basic data.
         foreach (var item in items)
         {
             var drink = db.Drinks.Find(item.DrinkID);
@@ -43,13 +43,11 @@ public class CartController : Controller
             {
                 item.Drink = drink;
                 item.DrinkName = drink.Name;
-                // Recalculate price just in case
                 item.Price = item.Size == "Large" ? drink.PriceLarge : drink.PriceRegular;
                 item.Subtotal = item.Quantity * item.Price;
             }
         }
 
-        // 4. Return the updated list to the specific part of the page
         return PartialView("_ShoppingCart", items);
     }
 
@@ -57,6 +55,8 @@ public class CartController : Controller
     [HttpPost]
     public IActionResult UpdateCart(int drinkId, string size, string iceLevel, string sugarLevel, int quantity)
     {
+        ModelState.Clear();
+
         var cart = hp.GetCart();
 
         var drink = db.Drinks.Find(drinkId);

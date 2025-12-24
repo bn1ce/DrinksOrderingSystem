@@ -69,11 +69,21 @@ else
                                             @Html.Hidden("SugarLevel", i.SugarLevel)
                                             
                                             <div class="position-relative">
-                                                @Html.DropDownList("Quantity", list, 
-                                                    new { 
-                                                        @class = "form-select form-select-sm border-success text-center fw-bold text-success", 
-                                                        style = "border-radius: 20px; cursor: pointer;" 
-                                                    })
+                                                <select name="Quantity"
+                                                        class="form-select form-select-sm border-success text-center fw-bold text-success"
+                                                        style="border-radius: 20px; cursor: pointer;">
+                                                    @for (int q = 1; q <= 10; q++)
+                                                    {
+                                                        if (q == i.Quantity)
+                                                        {
+                                                            <option value="@q" selected="selected">@q</option>
+                                                        }
+                                                        else
+                                                        {
+                                                            <option value="@q">@q</option>
+                                                        }
+                                                    }
+                                                </select>
                                             </div>
                                         </form>
                                     </td>
