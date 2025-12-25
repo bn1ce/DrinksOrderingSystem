@@ -1,198 +1,50 @@
-﻿@{
+﻿
+@{
     ViewBag.Title = "Sales Report";
     Layout = "~/Views/Shared/Admin_Layout.cshtml";
 }
 
-<style>
-    /* Analytics Page Styles */
-    .report-header {
-        background: linear-gradient(135deg, #1a3c1e 0%, #0f2b12 100%);
-        color: white;
-        padding: 30px;
-        border-radius: 16px;
-        margin-bottom: 30px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    }
-
-    /* KPI Cards */
-    .kpi-card {
-        background: #fff;
-        border-radius: 12px;
-        padding: 20px;
-        border-left: 5px solid #c5a059;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        height: 100%;
-        transition: transform 0.3s;
-    }
-
-        .kpi-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-        }
-
-    .kpi-title {
-        color: #888;
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        font-weight: 700;
-        margin-bottom: 5px;
-    }
-
-    .kpi-value {
-        color: #1a3c1e;
-        font-size: 1.8rem;
-        font-weight: 700;
-        font-family: 'Playfair Display', serif;
-    }
-
-    .kpi-icon {
-        float: right;
-        font-size: 2rem;
-        color: rgba(197, 160, 89, 0.2);
-    }
-
-    /* Chart Containers */
-    .chart-card {
-        background: #fff;
-        border-radius: 16px;
-        padding: 25px;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-        border: 1px solid rgba(0,0,0,0.03);
-    }
-
-    .chart-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-        border-bottom: 1px solid #f0f0f0;
-        padding-bottom: 15px;
-    }
-
-    .chart-title {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #333;
-        margin: 0;
-    }
-
-    /* FIX: Explicit container for charts */
-    .chart-wrapper {
-        position: relative;
-        height: 350px; /* Fixed height stops the infinite expansion */
-        width: 100%;
-    }
-</style>
-
-<div class="container py-4">
-
-    <div class="report-header d-flex justify-content-between align-items-center">
-        <div>
-            <h2 class="fw-bold mb-1" style="font-family: 'Playfair Display', serif;">Sales Analytics</h2>
-            <p class="mb-0 text-white-50">Real-time financial performance and trends</p>
-        </div>
-        <div>
-            <button onclick="window.print()" class="btn btn-outline-light btn-sm rounded-pill px-3">
-                <i class="fas fa-print me-2"></i> Print Report
-            </button>
-        </div>
+<div class="row">
+    <div class="col-md-6">
+        <canvas id="salesChart"></canvas>
     </div>
-
-    <div class="row g-4 mb-4">
-        <div class="col-md-6">
-            <div class="kpi-card">
-                <i class="fas fa-database kpi-icon"></i>
-                <div class="kpi-title">System Recorded Revenue</div>
-                <div class="kpi-value">RM @ViewBag.DbTotal</div>
-                <small class="text-success"><i class="fas fa-check-circle me-1"></i> Verified Orders</small>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="kpi-card" style="border-left-color: #6772e5;">
-                <i class="fab fa-stripe kpi-icon"></i>
-                <div class="kpi-title">Stripe Payment Gateway</div>
-                <div class="kpi-value">RM @ViewBag.StripeTotal</div>
-                <small class="text-muted"><i class="fas fa-sync-alt me-1"></i> Live Balance</small>
-            </div>
-        </div>
-    </div>
-
-    <div class="row g-4">
-        <div class="col-lg-8">
-            <div class="chart-card">
-                <div class="chart-header">
-                    <h5 class="chart-title"><i class="fas fa-chart-line me-2 text-primary"></i> Revenue Trend</h5>
-                    <span class="badge bg-light text-dark">Daily</span>
-                </div>
-
-                <div class="chart-wrapper">
-                    <canvas id="salesChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4">
-            <div class="chart-card">
-                <div class="chart-header">
-                    <h5 class="chart-title"><i class="fas fa-trophy me-2 text-warning"></i> Top Sellers</h5>
-                    <span class="badge bg-light text-dark">Units</span>
-                </div>
-
-                <div class="chart-wrapper">
-                    <canvas id="drinksChart"></canvas>
-                </div>
-            </div>
-        </div>
+    <div class="col-md-6">
+        <canvas id="drinksChart"></canvas>
     </div>
 </div>
 
+<hr />
+<h3>💰 Reconciliation</h3>
+<p><strong>Database Total:</strong> RM @ViewBag.DbTotal</p>
+<p><strong>Stripe Total:</strong> RM @ViewBag.StripeTotal</p>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    Chart.defaults.font.family = "'Lato', sans-serif";
-    Chart.defaults.color = '#666';
-
-    // 1. Sales Trend Chart
-    const salesCtx = document.getElementById('salesChart').getContext('2d');
-    let gradient = salesCtx.createLinearGradient(0, 0, 0, 400);
-    gradient.addColorStop(0, 'rgba(45, 90, 39, 0.2)');
-    gradient.addColorStop(1, 'rgba(45, 90, 39, 0.0)');
-
+    // Sales by Day
+    const salesCtx = document.getElementById('salesChart');
     new Chart(salesCtx, {
         type: 'line',
         data: {
             labels: @Html.Raw(ViewBag.SalesLabels),
             datasets: [{
-                label: 'Total Sales (RM)',
+                label: 'Sales (RM)',
                 data: @Html.Raw(ViewBag.SalesData),
-                borderColor: '#2d5a27',
-                backgroundColor: gradient,
-                borderWidth: 2,
-                pointBackgroundColor: '#c5a059',
-                pointRadius: 4,
-                fill: true,
-                tension: 0.4
+                borderColor: 'blue',
+                fill: false
             }]
         },
         options: {
-            responsive: true,
-            maintainAspectRatio: false, // This is safe now because of the wrapper
             plugins: {
-                legend: { display: false }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { borderDash: [5, 5] }
-                },
-                x: {
-                    grid: { display: false }
+                title: {
+                    display: true,
+                    text: '📅 Daily Sales Report',
+                    font: { size: 18 }
                 }
             }
         }
     });
 
-    // 2. Top Drinks Chart
+    // Top Drinks
     const drinksCtx = document.getElementById('drinksChart');
     new Chart(drinksCtx, {
         type: 'bar',
@@ -201,24 +53,15 @@
             datasets: [{
                 label: 'Units Sold',
                 data: @Html.Raw(ViewBag.DrinkData),
-                backgroundColor: ['#c5a059', '#2d5a27', '#d4af37', '#1a3c1e', '#e5c585'],
-                borderRadius: 5,
-                borderWidth: 0
+                backgroundColor: 'orange'
             }]
         },
         options: {
-            responsive: true,
-            maintainAspectRatio: false, // Safe now
             plugins: {
-                legend: { display: false }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { display: false }
-                },
-                x: {
-                    grid: { display: false }
+                title: {
+                    display: true,
+                    text: '🥤 Top 5 Best-Selling Drinks',
+                    font: { size: 18 }
                 }
             }
         }

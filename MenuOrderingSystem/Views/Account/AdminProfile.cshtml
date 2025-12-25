@@ -1,218 +1,71 @@
 ﻿@model MenuOrderingSystem.Models.Admin
 @{
-    ViewBag.Title = "Profile";
-    Layout = "~/Views/Shared/Admin_Layout.cshtml";
+    ViewBag.Title = "Admin | Profile";
 }
 
 <style>
-    /* Page Background */
     body {
-        background-color: #f4f6f8;
-        font-family: 'Lato', sans-serif;
+        background: url('/Images/homebg.png') no-repeat center center fixed;
+        background-size: cover;
     }
-
-    /* Admin Card */
-    .admin-profile-card {
-        background: #fff;
-        border-radius: 20px;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.08);
-        overflow: hidden;
-        max-width: 500px;
-        width: 100%;
-        border: 1px solid rgba(0,0,0,0.05);
-    }
-
-    /* Header Section */
-    .admin-header {
-        background: linear-gradient(135deg, #1a3c1e 0%, #0f2b12 100%); /* Deep Admin Green */
-        padding: 40px 30px;
-        text-align: center;
-        color: white;
-        position: relative;
-    }
-
-    .admin-avatar {
-        width: 90px;
-        height: 90px;
-        background: rgba(255,255,255,0.1);
-        backdrop-filter: blur(5px);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 15px;
-        border: 2px solid rgba(197, 160, 89, 0.5); /* Gold Border */
-        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-    }
-
-    .admin-badge {
-        background: #c5a059;
-        color: #000;
-        font-size: 0.7rem;
-        font-weight: 800;
-        padding: 4px 12px;
-        border-radius: 20px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        display: inline-block;
-        margin-top: 10px;
-    }
-
-    /* Info List */
-    .info-list {
-        padding: 30px;
-    }
-
-    .info-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 25px;
-        padding-bottom: 15px;
-        border-bottom: 1px solid #f0f0f0;
-    }
-
-        .info-item:last-child {
-            border-bottom: none;
-            margin-bottom: 10px;
-        }
-
-    .info-icon {
-        width: 40px;
-        height: 40px;
-        background: #f8f9fa;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #1a3c1e;
-        margin-right: 15px;
-        font-size: 1.1rem;
-    }
-
-    .info-label {
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        color: #888;
-        font-weight: 700;
-        letter-spacing: 0.5px;
-        display: block;
-        margin-bottom: 2px;
-    }
-
-    .info-value {
-        font-size: 1rem;
-        color: #333;
-        font-weight: 600;
-    }
-
-    /* Buttons */
-    .btn-dashboard {
-        background: #1a3c1e;
-        color: white;
-        width: 100%;
-        padding: 12px;
-        border-radius: 10px;
-        font-weight: 600;
-        border: none;
-        transition: 0.3s;
-        display: block;
-        text-align: center;
-        text-decoration: none;
-    }
-
-        .btn-dashboard:hover {
-            background: #2d5a27;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(26, 60, 30, 0.2);
-        }
-
-    .btn-outline-gold {
-        border: 2px solid #e0e0e0;
-        color: #555;
-        width: 100%;
-        padding: 12px;
-        border-radius: 10px;
-        font-weight: 600;
-        background: transparent;
-        transition: 0.3s;
-        display: block;
-        text-align: center;
-        text-decoration: none;
-    }
-
-        .btn-outline-gold:hover {
-            border-color: #c5a059;
-            color: #c5a059;
-            background: #fff;
-        }
-
-    .logout-link {
-        color: #dc3545;
-        font-size: 0.9rem;
-        font-weight: 600;
-        text-decoration: none;
-        transition: 0.2s;
-    }
-
-        .logout-link:hover {
-            text-decoration: underline;
-            color: #bd2130;
-        }
 </style>
 
-<div class="container py-5 d-flex justify-content-center align-items-center" style="min-height: 85vh;">
-    <div class="admin-profile-card">
+<div class="container mt-4 d-flex justify-content-center">
+    <div class="profile-card shadow-lg p-4 rounded-4"
+         style="max-width: 600px;
+                background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(247,247,249,0.9) 100%);
+                border: 1px solid #e5e5e5;">
 
-        <div class="admin-header">
-            <div class="admin-avatar">
-                <img src="~/Images/logo.png" alt="Admin Logo"
-                     style="width: 50px; height: 50px; object-fit: contain;">
+        <div class="mb-4 text-center" style="font-weight: 700; letter-spacing: 1px; color:#333;">
+            <div style="font-size: 2rem;">🛡️</div>
+
+            <div class="auth-logo text-center mb-4">
+                <img src="~/images/logo.png" alt="CHAGEE Logo" style="max-height: 60px;" />
             </div>
-            <h3 class="mb-0 fw-bold" style="font-family: 'Playfair Display', serif;">@Model.Name</h3>
-            <span class="admin-badge">System Administrator</span>
+
+            <div class="h4">Admin Account Settings</div>
         </div>
 
-        <div class="info-list">
+        <div class="text-center mb-3" style="font-weight: 500">
+            <p class="mb-0">Administrator Profile</p>
+        </div>
 
-            <div class="info-item">
-                <div class="info-icon">
-                    <i class="fas fa-envelope"></i>
-                </div>
-                <div>
-                    <span class="info-label">Email Address</span>
-                    <span class="info-value">@Model.Email</span>
-                </div>
+        <div class="px-2">
+            <div class="info-row mb-3">
+                <label class="text-muted small">Email</label>
+                <p class="fs-5 fw-semibold mb-0">@Model.Email</p>
             </div>
 
-            <div class="info-item">
-                <div class="info-icon">
-                    <i class="fas fa-phone-alt"></i>
-                </div>
-                <div>
-                    <span class="info-label">Contact Number</span>
-                    <span class="info-value">@Model.Phone</span>
-                </div>
+            <div class="info-row mb-3">
+                <label class="text-muted small">Name</label>
+                <p class="fs-5 fw-semibold mb-0">@Model.Name</p>
             </div>
 
-            <div class="row g-3 mt-2">
-                <div class="col-12">
-                    <a href="/Admin/Dashboard" class="btn-dashboard">
-                        <i class="fas fa-chart-pie me-2"></i> Open Dashboard
-                    </a>
-                </div>
-                <div class="col-12">
-                    <a href="/Account/UpdatePassword" class="btn-outline-gold">
-                        <i class="fas fa-key me-2"></i> Change Password
-                    </a>
-                </div>
+            <div class="info-row mb-4">
+                <label class="text-muted small">Phone</label>
+                <p class="fs-5 fw-semibold mb-0">@Model.Phone</p>
+            </div>
+
+            <div class="info-row mb-4 d-flex justify-content-center">
+                <a href="/Admin/Dashboard"
+                   class="btn btn-outline-dark w-50 py-2 rounded-3 shadow-sm text-center"
+                   style="letter-spacing: .5px; border-width:2px;">
+                    📊 Go to Dashboard
+                </a>
+            </div>
+
+            <div class="info-row mb-4 d-flex justify-content-center">
+                <a href="/Account/UpdatePassword"
+                   class="btn btn-outline-dark w-50 py-2 rounded-3 shadow-sm text-center"
+                   style="letter-spacing: .5px; border-width:2px;">
+                    🔑 Change Password
+                </a>
             </div>
 
             <div class="text-center mt-4">
-                <a href="/Account/Logout" class="logout-link">
-                    <i class="fas fa-sign-out-alt me-1"></i> Sign Out
-                </a>
+                <a href="/Account/Logout">Log out </a>
             </div>
+
 
         </div>
     </div>

@@ -1,180 +1,85 @@
 ﻿@model MenuOrderingSystem.Models.ViewModels.FeedbackVM
 
 @{
-    ViewBag.Title = "Customer Feedback";
+    ViewBag.Title = "Feedback";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="container py-5">
 
-    <div class="text-center mb-5">
-        <h1 class="display-5 fw-bold" style="font-family: 'Playfair Display', serif; color: var(--chagee-green, #2d5a27);">
-            We Value Your Voice
-        </h1>
-        <p class="text-muted fs-5">Tell us about your experience at CHAGEE</p>
-        <div class="mx-auto mt-3" style="width: 60px; height: 3px; background-color: #c5a059;"></div>
+    <!-- Page Title -->
+    <h2 class="text-center mb-5" style="font-family:'Segoe UI', sans-serif; font-weight:700; color:#2c3e50;">
+        📝 Customer Feedback
+    </h2>
+
+    <!-- Feedback Form -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-6">
+            <form asp-action="Create" method="post">
+                <div class="form-group mb-3">
+                    <label asp-for="Rating"></label>
+                    <input asp-for="Rating" class="form-control" type="number" min="1" max="10" />
+                    <span asp-validation-for="Rating" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Comment"></label>
+                    <textarea asp-for="Comment" class="form-control" rows="4" placeholder="Write your comments here..."></textarea>
+                    <span asp-validation-for="Comment" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-success w-100">Submit Feedback</button>
+            </form>
+        </div>
     </div>
 
-    <div class="row g-5">
-
-        <div class="col-lg-5">
-            <div class="card border-0 shadow-lg rounded-4 overflow-hidden position-sticky" style="top: 100px;">
-                <div class="card-header bg-success text-white p-4 text-center"
-                     style="background: linear-gradient(135deg, #2d5a27 0%, #1a3c1e 100%);">
-                    <h4 class="mb-0 fw-bold"><i class="fas fa-pen-nib me-2"></i> Leave a Review</h4>
-                </div>
-                <div class="card-body p-4">
-                    <form asp-action="Create" method="post">
-
-                        <div class="mb-4 text-center">
-                            <label class="form-label fw-bold text-muted text-uppercase small mb-3">Rate your experience (1-10)</label>
-
-                            <input asp-for="Rating" type="hidden" id="ratingInput" value="10" />
-
-                            <div class="d-flex flex-wrap justify-content-center gap-2" id="rating-group">
-                                @for (int i = 1; i <= 10; i++)
-                                {
-                                    <button type="button"
-                                            class="btn btn-outline-success rating-btn rounded-circle fw-bold @(i == 10 ? "active" : "")"
-                                            data-value="@i"
-                                            style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center;">
-                                        @i
-                                    </button>
-                                }
-                            </div>
-                            <span asp-validation-for="Rating" class="text-danger small mt-2 d-block"></span>
-                        </div>
-
-                        <div class="mb-4">
-                            <label asp-for="Comment" class="form-label fw-bold text-muted text-uppercase small">Your Message</label>
-                            <textarea asp-for="Comment" class="form-control bg-light border-0 py-3 px-3"
-                                      rows="5" placeholder="What did you like? What can we improve?"
-                                      style="resize: none; border-radius: 12px;"></textarea>
-                            <span asp-validation-for="Comment" class="text-danger small"></span>
-                        </div>
-
-                        <button type="submit" class="btn btn-success w-100 rounded-pill py-3 fw-bold shadow hover-lift"
-                                style="background-color: #c5a059; border: none;">
-                            Submit Feedback <i class="fas fa-paper-plane ms-2"></i>
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-7">
-            <h4 class="fw-bold mb-4" style="color: #2c3e50;">Recent Reviews</h4>
-
-            @if (ViewBag.Feedbacks != null)
-            {
-                var list = ViewBag.Feedbacks as List<MenuOrderingSystem.Models.Feedback>;
-                if (list.Any())
+    <!-- Existing Feedbacks -->
+    <h3 class="text-center mb-4" style="font-weight:600; color:#2c3e50;">Previous Feedbacks</h3>
+    <div id="feedback-container" class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="list-group">
+                @if (ViewBag.Feedbacks != null)
                 {
-                    <div class="row g-3">
-                        @foreach (var fb in list)
-                        {
-                            <div class="col-12">
-                                <div class="card border-0 shadow-sm rounded-4 h-100 hover-card bg-white">
-                                    <div class="card-body p-4 position-relative">
-                                        <i class="fas fa-quote-right position-absolute top-0 end-0 m-3 text-muted opacity-10 fa-3x"></i>
-
-                                        <div class="d-flex align-items-center mb-3">
-                                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-3 text-success fw-bold fs-5 shadow-sm"
-                                                 style="width: 50px; height: 50px; border: 2px solid #e8f5e9;">
-                                                @(string.IsNullOrEmpty(fb.Name) ? "?" : fb.Name.Substring(0, 1).ToUpper())
-                                            </div>
-
-                                            <div>
-                                                <h6 class="fw-bold mb-0 text-dark">@fb.Name</h6>
-                                                <small class="text-muted" style="font-size: 0.75rem;">
-                                                    @fb.FeedbackTime.ToString("MMM dd, yyyy • hh:mm tt")
-                                                </small>
-                                            </div>
-                                        </div>
-
-                                        <div class="mb-2">
-                                            @if (fb.Rating >= 8)
-                                            {
-                                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3"><i class="fas fa-star me-1"></i> @fb.Rating / 10 &bull; Excellent</span>
-                                            }
-                                            else if (fb.Rating >= 5)
-                                            {
-                                                <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-3"><i class="fas fa-star-half-alt me-1"></i> @fb.Rating / 10 &bull; Good</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3"><i class="far fa-star me-1"></i> @fb.Rating / 10 &bull; Poor</span>
-                                            }
-                                        </div>
-
-                                        <p class="text-secondary mb-0" style="line-height: 1.6;">
-                                            "@(!string.IsNullOrEmpty(fb.Comment) ? fb.Comment : "No comment provided.")"
-                                        </p>
-                                    </div>
-                                </div>
+                    foreach (var fb in ViewBag.Feedbacks as List<MenuOrderingSystem.Models.Feedback>)
+                    {
+                        <div class="list-group-item mb-3 shadow-sm">
+                            <div class="d-flex justify-content-between">
+                                <strong>@fb.Name</strong>
+                                <span class="badge bg-primary">@fb.Rating/10</span>
                             </div>
-                        }
-                    </div>
+                            <p class="mb-1">@(!string.IsNullOrEmpty(fb.Comment) ? fb.Comment : "No comment")</p>
+                            <small class="text-muted">@fb.FeedbackTime.ToString("g")</small>
+                        </div>
+                    }
                 }
                 else
                 {
-                    <div class="text-center py-5 text-muted bg-light rounded-4 border border-dashed">
-                        <i class="far fa-comment-dots fa-3x mb-3 opacity-50"></i>
-                        <p>No feedback yet. Be the first to share your thoughts!</p>
-                    </div>
+                    <p class="text-center text-muted">No feedback yet.</p>
                 }
-            }
+            </div>
         </div>
     </div>
+
 </div>
 
+<!-- Custom Styling -->
 <style>
-    .rating-btn.active {
-        background-color: #2d5a27 !important;
-        color: white !important;
-        border-color: #2d5a27 !important;
-        transform: scale(1.1);
-        box-shadow: 0 4px 10px rgba(45, 90, 39, 0.3);
+    .list-group-item {
+        border-radius: 12px;
+        background-color: #f8f9fa;
+        transition: 0.3s;
     }
 
-    .rating-btn:hover {
-        background-color: #e8f5e9;
-        color: #2d5a27;
-        border-color: #2d5a27;
-    }
-
-    .hover-lift:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important;
-    }
-
-    .hover-card {
-        transition: all 0.3s ease;
-    }
-
-        .hover-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08) !important;
+        .list-group-item:hover {
+            background-color: #e2e6ea;
         }
+
+    label {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .badge {
+        font-size: 0.9rem;
+    }
 </style>
-
-@section foot {
-    <script>
-        // Simple script to handle the 1-10 rating buttons
-        document.addEventListener('DOMContentLoaded', function () {
-            const buttons = document.querySelectorAll('.rating-btn');
-            const hiddenInput = document.getElementById('ratingInput');
-
-            buttons.forEach(btn => {
-                btn.addEventListener('click', function () {
-                    // Remove active class from all
-                    buttons.forEach(b => b.classList.remove('active'));
-                    // Add active to clicked
-                    this.classList.add('active');
-                    // Update hidden input
-                    hiddenInput.value = this.getAttribute('data-value');
-                });
-            });
-        });
-    </script>
-}

@@ -2,122 +2,65 @@
 @model RegisterVM
 
 @{
-    ViewBag.Title = "Join the Club";
+    ViewBag.Title = "Account | Register";
     Layout = "~/Views/Shared/_AuthLayout.cshtml";
 }
 
 <div class="text-center mb-4">
-    <h2 class="auth-title fw-bold" style="color: #2d5a27;">Create Account</h2>
-    <p class="text-muted small">Join us today for exclusive rewards</p>
+    <img src="~/images/logo.png" alt="CHAGEE Logo" style="width:80px; margin-bottom:10px;" />
+    <h2 class="mb-2">Create an Account</h2>
+    <p class="text-muted">Please fill in the details to sign up.</p>
 </div>
 
 <form asp-action="Register" asp-controller="Account" method="post" enctype="multipart/form-data">
-    <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small text-start"></div>
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
 
-    <div class="form-group mb-3">
-        <div class="input-group">
-            <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-user"></i></span>
-            <input asp-for="Name" class="form-control border-start-0 ps-0" placeholder="Full Name" style="border-left: none;" />
-        </div>
-        <span asp-validation-for="Name" class="text-danger small text-start d-block mt-1"></span>
+    <!-- Full Name -->
+    <div class="mb-3">
+        <input asp-for="Name" class="form-control" placeholder="Full Name" />
+        <span asp-validation-for="Name" class="text-danger small"></span>
     </div>
 
-    <div class="form-group mb-3">
-        <div class="input-group">
-            <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-envelope"></i></span>
-            <input asp-for="Email" class="form-control border-start-0 ps-0" placeholder="Email Address" />
-        </div>
-        <span asp-validation-for="Email" class="text-danger small text-start d-block mt-1"></span>
+    <!-- Email -->
+    <div class="mb-3">
+        <input asp-for="Email" class="form-control" placeholder="Email Address" />
+        <span asp-validation-for="Email" class="text-danger small"></span>
     </div>
 
-    <div class="form-group mb-3">
-        <div class="input-group">
-            <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-phone"></i></span>
-            <input asp-for="PhoneNumber" class="form-control border-start-0 ps-0" placeholder="Phone Number" />
-        </div>
-        <span asp-validation-for="PhoneNumber" class="text-danger small text-start d-block mt-1"></span>
+    <!-- Phone Number -->
+    <div class="mb-3">
+        <input asp-for="PhoneNumber" class="form-control" placeholder="Phone Number" />
+        <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
     </div>
 
-    <div class="form-group mb-3">
-        <div class="input-group">
-            <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-lock"></i></span>
-            <input asp-for="Password" type="password" class="form-control border-start-0 ps-0" placeholder="Password" />
-        </div>
-        <span asp-validation-for="Password" class="text-danger small text-start d-block mt-1"></span>
+    <!-- Password -->
+    <div class="mb-3">
+        <input asp-for="Password" type="password" class="form-control" placeholder="Password" />
+        <span asp-validation-for="Password" class="text-danger small"></span>
     </div>
 
-    <div class="form-group mb-3">
-        <div class="input-group">
-            <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-check-circle"></i></span>
-            <input asp-for="Confirm" type="password" class="form-control border-start-0 ps-0" placeholder="Confirm Password" />
-        </div>
-        <span asp-validation-for="Confirm" class="text-danger small text-start d-block mt-1"></span>
+    <!-- Confirm Password -->
+    <div class="mb-3">
+        <input asp-for="Confirm" type="password" class="form-control" placeholder="Confirm Password" />
+        <span asp-validation-for="Confirm" class="text-danger small"></span>
     </div>
 
-    <div class="form-group mb-4">
-        <label class="form-label small text-muted text-start w-100 ms-1">Profile Photo (Optional)</label>
-        <div class="input-group">
-            <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-camera"></i></span>
-            <input asp-for="Photo" type="file" class="form-control border-start-0 ps-0" accept=".jpg,.jpeg,.png" />
-        </div>
-        <span asp-validation-for="Photo" class="text-danger small text-start d-block mt-1"></span>
+    <!-- Profile Photo (Optional) -->
+    <div class="mb-3">
+        <input asp-for="Photo" type="file" class="form-control" accept=".jpg,.jpeg,.png" />
+        <span asp-validation-for="Photo" class="text-danger small"></span>
+        <small class="text-muted">*Optional</small>
     </div>
 
-    <button type="submit" class="btn-auth shadow hover-lift">
-        Create Account <i class="fas fa-arrow-right ms-2"></i>
-    </button>
+    <button type="submit" class="btn btn-dark w-100">Register</button>
 </form>
 
-<div class="auth-footer mt-4">
-    Already a member?
-    <a href="/Account/Login" class="fw-bold" style="color: #c5a059;">Sign In Here</a>
-</div>
+<p class="text-center mt-3">
+    Already have an account? <a href="/Account/Login">Sign in</a>
+</p>
 
 @section foot {
     <script>
-        // Clean validation
         $.validator.setDefaults({ ignore: '' });
     </script>
-
-    <style>
-        /* Custom Input Styling for this page */
-        .input-group-text {
-            border-color: #e0e0e0;
-            border-top-left-radius: 12px;
-            border-bottom-left-radius: 12px;
-        }
-
-        .form-control {
-            border-color: #e0e0e0;
-            border-top-right-radius: 12px !important;
-            border-bottom-right-radius: 12px !important;
-            padding-left: 10px;
-        }
-
-            /* Focus state for the whole group */
-            .form-control:focus {
-                box-shadow: none;
-                border-color: #c5a059;
-            }
-
-                .form-control:focus + .input-group-text,
-                .form-control:focus ~ .input-group-text {
-                    border-color: #c5a059;
-                }
-
-        /* Make the icon turn green when input is focused (using sibling selector trick) */
-        .input-group:focus-within .input-group-text {
-            border-color: #c5a059;
-            color: #2d5a27 !important;
-        }
-
-        .input-group:focus-within .form-control {
-            border-color: #c5a059;
-        }
-
-        .hover-lift:hover {
-            transform: translateY(-2px);
-            transition: 0.3s;
-        }
-    </style>
 }
