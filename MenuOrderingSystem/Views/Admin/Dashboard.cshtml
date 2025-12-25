@@ -1,19 +1,172 @@
 ﻿@{
-    ViewBag.Title = "Admin | Dashboard";
+    ViewBag.Title = "Dashboard";
     Layout = "~/Views/Shared/Admin_Layout.cshtml";
 }
 
-<div class="list-group">
-    <a asp-controller="Admin" asp-action="Report" class="list-group-item list-group-item-action">
-        📊 Sales Report
-    </a>
-    <a asp-controller="Admin" asp-action="Orders" class="list-group-item list-group-item-action">
-        📦 Orders Maintenance
-    </a>
-    <a asp-controller="Admin" asp-action="Drinks" class="list-group-item list-group-item-action">
-        🍹 Drinks Maintenance
-    </a>
-    <a asp-controller="Admin" asp-action="Members" class="list-group-item list-group-item-action">
-        👥 Members Account Maintenance
-    </a>
+<style>
+    /* Dashboard Specific Styles */
+    .dashboard-header {
+        background: linear-gradient(135deg, #1a3c1e 0%, #0f2b12 100%);
+        color: white;
+        padding: 40px;
+        border-radius: 16px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        position: relative;
+        overflow: hidden;
+    }
+
+        /* Decorative Circle in Header */
+        .dashboard-header::after {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background: rgba(197, 160, 89, 0.1);
+            border-radius: 50%;
+        }
+
+    /* Action Cards */
+    .action-card {
+        background: #fff;
+        border: 1px solid rgba(0,0,0,0.05);
+        border-radius: 16px;
+        padding: 30px;
+        text-align: center;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+        text-decoration: none;
+        display: block;
+    }
+
+        .action-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(26, 60, 30, 0.1);
+            border-color: #c5a059;
+        }
+
+    /* Icons */
+    .card-icon-wrapper {
+        width: 70px;
+        height: 70px;
+        background: #f8f9fa;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        transition: 0.3s;
+    }
+
+    .action-card:hover .card-icon-wrapper {
+        background: #1a3c1e;
+        color: #c5a059;
+    }
+
+    .action-card i {
+        font-size: 1.8rem;
+        color: #1a3c1e;
+        transition: 0.3s;
+    }
+
+    .action-card:hover i {
+        color: #c5a059;
+    }
+
+    /* Typography */
+    .card-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: #333;
+        font-size: 1.2rem;
+        margin-bottom: 8px;
+    }
+
+    .card-desc {
+        color: #888;
+        font-size: 0.9rem;
+        margin-bottom: 0;
+    }
+
+    /* Arrow Indicator */
+    .hover-arrow {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        opacity: 0;
+        transform: translateX(-10px);
+        transition: 0.3s;
+        color: #c5a059;
+    }
+
+    .action-card:hover .hover-arrow {
+        opacity: 1;
+        transform: translateX(0);
+    }
+</style>
+
+<div class="container py-4">
+
+    <div class="dashboard-header d-flex align-items-center justify-content-between">
+        <div>
+            <h2 class="fw-bold mb-1" style="font-family: 'Playfair Display', serif;">Overview</h2>
+            <p class="mb-0 text-white-50">Welcome back, Admin. Here is what's happening today.</p>
+        </div>
+        <div class="d-none d-md-block text-end">
+            <span class="badge bg-warning text-dark text-uppercase px-3 py-2">System Active</span>
+            <div class="mt-2 small text-white-50">@DateTime.Now.ToString("dd MMM yyyy")</div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-6 col-lg-3">
+            <a asp-controller="Admin" asp-action="Report" class="action-card">
+                <div class="card-icon-wrapper">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <h5 class="card-title">Sales Report</h5>
+                <p class="card-desc">Analyze revenue & trends</p>
+                <i class="fas fa-arrow-right hover-arrow"></i>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a asp-controller="Admin" asp-action="Orders" class="action-card">
+                <div class="card-icon-wrapper">
+                    <i class="fas fa-box-open"></i>
+                </div>
+                <h5 class="card-title">Manage Orders</h5>
+                <p class="card-desc">Track & update status</p>
+                <i class="fas fa-arrow-right hover-arrow"></i>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a asp-controller="Admin" asp-action="Drinks" class="action-card">
+                <div class="card-icon-wrapper">
+                    <i class="fas fa-cocktail"></i>
+                </div>
+                <h5 class="card-title">Drinks Menu</h5>
+                <p class="card-desc">Add or edit products</p>
+                <i class="fas fa-arrow-right hover-arrow"></i>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a asp-controller="Admin" asp-action="Members" class="action-card">
+                <div class="card-icon-wrapper">
+                    <i class="fas fa-users-cog"></i>
+                </div>
+                <h5 class="card-title">Member Accounts</h5>
+                <p class="card-desc">Manage user access</p>
+                <i class="fas fa-arrow-right hover-arrow"></i>
+            </a>
+        </div>
+
+    </div>
 </div>

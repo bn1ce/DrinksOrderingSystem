@@ -273,12 +273,12 @@ namespace MenuOrderingSystem.Controllers {
                                             border: 1px solid #333'>
                 <p>Dear {u.Name},<p>
                 <p>Your password has been reset to:</p>
-                <h1 style='color: red'>{password}</h1>
+                <h1 style='color: #2d5a27;'>{password}</h1>
                 <p>
                     Please <a href='{url}'>login</a>
                     with your new password.
                 </p>
-                <p>From, 🐱 Super Admin</p>
+                <p>Best regards,<br><b>CHAGEE Team</b></p>
             ";
 
             hp.SendEmail(mail);
