@@ -335,5 +335,17 @@ namespace MenuOrderingSystem.Controllers
 
             return View(member);
         }
+
+        // GET: Admin/Feedbacks
+        public IActionResult Feedbacks()
+        {
+            // Use 'FeedbackTime' as per your model
+            var list = db.Feedback
+                         .Include(f => f.Member) // Optional: Include if you need member details
+                         .OrderByDescending(f => f.FeedbackTime)
+                         .ToList();
+
+            return View(list);
+        }
     }
 }

@@ -1,0 +1,153 @@
+﻿@model IEnumerable<MenuOrderingSystem.Models.Feedback>
+
+@{
+    ViewBag.Title = "Customer Feedback";
+    Layout = "~/Views/Shared/Admin_Layout.cshtml";
+}
+
+<style>
+    /* Premium Header */
+    .page-header-card {
+        background: linear-gradient(135deg, #1a3c1e 0%, #0f2b12 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 16px;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* Table Container */
+    .table-container {
+        background: #fff;
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        border: 1px solid rgba(0,0,0,0.03);
+    }
+
+    .table-custom thead th {
+        background-color: #f8f9fa;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        color: #888;
+        padding: 15px 20px;
+        border-bottom: 2px solid #eee;
+    }
+
+    .table-custom tbody td {
+        padding: 15px 20px;
+        vertical-align: middle;
+        border-bottom: 1px solid #f8f9fa;
+        color: #333;
+    }
+
+    /* Rating Badge Style (for 1-10 scale) */
+    .rating-badge {
+        font-weight: 700;
+        padding: 5px 10px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .rating-high {
+        background: #d1e7dd;
+        color: #0f5132;
+    }
+    /* 8-10 */
+    .rating-mid {
+        background: #fff3cd;
+        color: #856404;
+    }
+    /* 5-7 */
+    .rating-low {
+        background: #f8d7da;
+        color: #842029;
+    }
+    /* 1-4 */
+</style>
+
+<div class="container py-4">
+
+    <div class="page-header-card">
+        <div>
+            <h2 class="fw-bold mb-1" style="font-family: 'Playfair Display', serif;">Customer Feedback</h2>
+            <p class="mb-0 text-white-50">Review ratings and comments from customers.</p>
+        </div>
+        <div class="d-none d-md-block">
+            <div class="bg-white text-dark rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 50px; height: 50px;">
+                <i class="fas fa-comment-alt fa-lg" style="color: #1a3c1e;"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <div class="table-responsive">
+            <table class="table table-custom table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Customer Name</th>
+                        <th>Email</th>
+                        <th>Rating (1-10)</th>
+                        <th style="width: 40%;">Comment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="far fa-comments fa-3x mb-3 text-light"></i>
+                                <p>No feedback received yet.</p>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var f in Model)
+                        {
+                            // Determine Color based on score
+                            string badgeClass = "rating-mid";
+                            if (f.Rating >= 8) { badgeClass = "rating-high"; }
+                            else if (f.Rating <= 4) { badgeClass = "rating-low"; }
+
+                            <tr>
+                                <td class="text-muted small">
+                                    @f.FeedbackTime.ToString("dd MMM yyyy, h:mm tt")
+                                </td>
+                                <td class="fw-bold">
+                                    @f.Name
+                                </td>
+                                <td class="text-muted small">
+                                    @f.MemberEmail
+                                </td>
+                                <td>
+                                    <span class="rating-badge @badgeClass">
+                                        <i class="fas fa-star"></i> @f.Rating / 10
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (string.IsNullOrEmpty(f.Comment))
+                                    {
+                                        <span class="text-muted small fst-italic">No comment provided</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-secondary">@f.Comment</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
