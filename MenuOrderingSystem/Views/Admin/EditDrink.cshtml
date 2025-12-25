@@ -1,59 +1,266 @@
 ﻿@model MenuOrderingSystem.Models.DrinkVM
 
-
 @{
-    ViewBag.Title = "Admin | Edit Drink";
+    ViewBag.Title = "Admin | Edit Product";
     Layout = "~/Views/Shared/Admin_Layout.cshtml";
 }
 
-<h2>Edit Drink</h2>
+<style>
+    /* 1. Header Card */
+    .edit-header-card {
+        background: linear-gradient(135deg, #1a3c1e 0%, #0f2b12 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 16px;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        display: flex;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+    }
 
-<form asp-action="EditDrink" method="post" class="form">
-    <input type="hidden" asp-for="DrinkID" />
+        .edit-header-card::after {
+            content: '';
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 150px;
+            height: 150px;
+            background: rgba(197, 160, 89, 0.1);
+            border-radius: 50%;
+        }
 
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    /* 2. Form Card */
+    .form-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        border: 1px solid rgba(0,0,0,0.03);
+    }
 
-    <label asp-for="Name"></label>
-    <input asp-for="Name" class="form-control" autofocus />
-    <span asp-validation-for="Name" class="text-danger"></span>
+    /* 3. Input Styling */
+    .form-label-custom {
+        font-size: 0.85rem;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 700;
+        margin-bottom: 8px;
+        display: block;
+    }
 
-    <label asp-for="Description"></label>
-    <textarea asp-for="Description" class="form-control"></textarea>
-    <span asp-validation-for="Description" class="text-danger"></span>
+    .form-control-custom, .form-select-custom {
+        border: 2px solid #eee;
+        border-radius: 10px;
+        padding: 12px 15px;
+        font-size: 1rem;
+        transition: 0.3s;
+        width: 100%;
+        background: #fcfcfc;
+    }
 
-    <label asp-for="PriceRegular"></label>
-    <input asp-for="PriceRegular" class="form-control" />
-    <span asp-validation-for="PriceRegular" class="text-danger"></span>
+        .form-control-custom:focus, .form-select-custom:focus {
+            border-color: #c5a059;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(197, 160, 89, 0.1);
+            outline: none;
+        }
 
-    <label asp-for="PriceLarge"></label>
-    <input asp-for="PriceLarge" class="form-control" />
-    <span asp-validation-for="PriceLarge" class="text-danger"></span>
+    /* 4. Image Upload Area */
+    .upload-area {
+        border: 2px dashed #ddd;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: 0.3s;
+        background: #fafafa;
+        position: relative;
+    }
 
-    <div class="mb-3">
-        <label asp-for="Image" class="form-label">Upload Drink Photo</label>
-        <input asp-for="Image" type="file" class="form-control" accept="image/*" />
-        <span asp-validation-for="Image" class="text-danger"></span>
+        .upload-area:hover {
+            border-color: #c5a059;
+            background: #fff;
+        }
+
+    .preview-img {
+        max-width: 150px;
+        max-height: 150px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        display: none; /* Hidden by default until loaded */
+        margin: 10px auto;
+        object-fit: cover;
+    }
+
+    /* 5. Custom Switch for Availability */
+    .form-check-input:checked {
+        background-color: #2d5a27;
+        border-color: #2d5a27;
+    }
+
+    /* Buttons */
+    .btn-save {
+        background: linear-gradient(135deg, #2d5a27 0%, #1a3c1e 100%);
+        color: white;
+        padding: 12px 30px;
+        border-radius: 50px;
+        font-weight: 600;
+        border: none;
+        transition: 0.3s;
+        box-shadow: 0 5px 15px rgba(45, 90, 39, 0.2);
+    }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(45, 90, 39, 0.3);
+            background: linear-gradient(135deg, #356b2e 0%, #2d5a27 100%);
+            color: white;
+        }
+
+    .btn-cancel {
+        background: white;
+        border: 2px solid #eee;
+        color: #666;
+        padding: 12px 30px;
+        border-radius: 50px;
+        font-weight: 600;
+        transition: 0.3s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-cancel:hover {
+            background: #f8f9fa;
+            color: #333;
+            border-color: #ddd;
+        }
+</style>
+
+<div class="container py-4" style="max-width: 900px;">
+
+    <div class="edit-header-card">
+        <div class="me-3 bg-white text-success rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+            <i class="fas fa-pencil-alt fa-lg"></i>
+        </div>
+        <div>
+            <h2 class="fw-bold mb-0" style="font-family: 'Playfair Display', serif;">Edit Product</h2>
+            <p class="mb-0 text-white-50">Update product details, pricing, and imagery.</p>
+        </div>
     </div>
 
+    <form asp-action="EditDrink" method="post" enctype="multipart/form-data" class="form-card">
+        <input type="hidden" asp-for="DrinkID" />
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3 small"></div>
 
-    <div class="mb-3">
-        <label asp-for="CategoryID" class="form-label">Category</label>
-        <select asp-for="CategoryID" class="form-select">
-            <option value="1">Milk Tea</option>
-            <option value="2">Fruit Tea</option>
-            <option value="3">Brew Tea</option>
-        </select>
-        <span asp-validation-for="CategoryID" class="text-danger"></span>
-    </div>
+        <div class="row g-4">
 
+            <div class="col-lg-8">
+                <div class="row g-3">
 
-    <label asp-for="IsAvailable"></label>
-    <input asp-for="IsAvailable" type="checkbox" />
-    <span asp-validation-for="IsAvailable" class="text-danger"></span>
+                    <div class="col-12">
+                        <label asp-for="Name" class="form-label-custom">Product Name</label>
+                        <input asp-for="Name" class="form-control-custom" placeholder="e.g. Jasmine Green Milk Tea" autofocus />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
 
-    <section class="mt-3">
-        <button type="submit" class="btn btn-success">Save Changes</button>
-        <a asp-action="Drinks" class="btn btn-secondary">Cancel</a>
-    </section>
-</form>
+                    <div class="col-md-6">
+                        <label asp-for="CategoryID" class="form-label-custom">Category</label>
+                        <select asp-for="CategoryID" class="form-select form-select-custom">
+                            <option value="1">Milk Tea</option>
+                            <option value="2">Fruit Tea</option>
+                            <option value="3">Brew Tea</option>
+                        </select>
+                        <span asp-validation-for="CategoryID" class="text-danger small"></span>
+                    </div>
 
+                    <div class="col-md-6 d-flex align-items-center">
+                        <div class="form-check form-switch mt-4 ms-2">
+                            <input asp-for="IsAvailable" class="form-check-input" type="checkbox" id="availSwitch" style="width: 3em; height: 1.5em; cursor: pointer;">
+                            <label class="form-check-label fw-bold ms-2 pt-1" for="availSwitch">Available for Sale</label>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <label asp-for="Description" class="form-label-custom">Description</label>
+                        <textarea asp-for="Description" class="form-control-custom" rows="3" placeholder="Describe the taste profile..."></textarea>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label-custom mb-2">Pricing Strategy (RM)</label>
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-0 fw-bold text-muted">Reg</span>
+                                    <input asp-for="PriceRegular" class="form-control-custom rounded-end" placeholder="0.00" />
+                                </div>
+                                <span asp-validation-for="PriceRegular" class="text-danger small"></span>
+                            </div>
+                            <div class="col-6">
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-0 fw-bold text-muted">Lrg</span>
+                                    <input asp-for="PriceLarge" class="form-control-custom rounded-end" placeholder="0.00" />
+                                </div>
+                                <span asp-validation-for="PriceLarge" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <label class="form-label-custom">Product Image</label>
+
+                <div class="upload-area" onclick="document.getElementById('imageInput').click()">
+                    <img id="imagePreview" class="preview-img" alt="Preview" />
+
+                    <div id="uploadPlaceholder" class="py-4">
+                        <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                        <p class="text-muted small mb-0">Click to upload new image</p>
+                        <small class="text-muted" style="font-size: 0.7rem;">(JPG, PNG)</small>
+                    </div>
+
+                    <input asp-for="Image" type="file" id="imageInput" class="d-none" accept="image/*" onchange="previewFile(this)" />
+                </div>
+                <span asp-validation-for="Image" class="text-danger small d-block text-center mt-2"></span>
+            </div>
+
+        </div>
+
+        <div class="d-flex justify-content-end gap-3 mt-5 pt-3 border-top">
+            <a asp-action="Drinks" class="btn-cancel">Cancel</a>
+            <button type="submit" class="btn-save">
+                <i class="fas fa-save me-2"></i> Save Changes
+            </button>
+        </div>
+
+    </form>
+</div>
+
+@section foot {
+    <script>
+        function previewFile(input) {
+            var preview = document.getElementById('imagePreview');
+            var placeholder = document.getElementById('uploadPlaceholder');
+            var file = input.files[0];
+            var reader = new FileReader();
+
+            reader.onloadend = function () {
+                preview.src = reader.result;
+                preview.style.display = 'block'; // Show image
+                placeholder.style.display = 'none'; // Hide placeholder text
+            }
+
+            if (file) {
+                reader.readAsDataURL(file);
+            } else {
+                preview.src = "";
+                preview.style.display = 'none';
+                placeholder.style.display = 'block';
+            }
+        }
+    </script>
+}

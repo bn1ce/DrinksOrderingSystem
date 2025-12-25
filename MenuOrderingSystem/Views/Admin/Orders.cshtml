@@ -1,29 +1,195 @@
 ﻿@model List<MenuOrderingSystem.Models.Order>
 
 @{
-    ViewBag.Title = "Admin | Manage Orders";
+    ViewBag.Title = "Orders Management";
     Layout = "~/Views/Shared/Admin_Layout.cshtml";
 }
 
-<h2>All Orders</h2>
+<style>
+    /* Premium Page Header */
+    .page-header-card {
+        background: linear-gradient(135deg, #1a3c1e 0%, #0f2b12 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 16px;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 
-<div class="row mb-3">
-    <div class="col-md-6">
-        <input type="text" id="searchBox" placeholder="Search by email or order id" class="form-control" />
+    /* Filter Toolbar */
+    .filter-bar {
+        background: #fff;
+        padding: 15px 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        border: 1px solid rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+    }
+
+    /* Custom Inputs */
+    .search-input {
+        border: 2px solid #eee;
+        border-radius: 8px;
+        padding: 10px 15px;
+        transition: 0.3s;
+        width: 100%;
+    }
+
+        .search-input:focus {
+            border-color: #c5a059;
+            box-shadow: none;
+            outline: none;
+        }
+
+    .status-select {
+        border: 2px solid #eee;
+        border-radius: 8px;
+        padding: 10px 15px;
+        cursor: pointer;
+        background-color: #fff;
+    }
+
+        .status-select:focus {
+            border-color: #c5a059;
+            outline: none;
+        }
+
+    /* Table Container styling */
+    .table-responsive {
+        background: #fff;
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        border: 1px solid rgba(0,0,0,0.03);
+    }
+
+    /* Styles for AJAX loaded table */
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .admin-table th {
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            color: #888;
+            padding: 15px;
+            border-bottom: 2px solid #f0f0f0;
+            font-weight: 700;
+            text-align: left;
+        }
+
+        .admin-table td {
+            padding: 15px;
+            border-bottom: 1px solid #f8f9fa;
+            color: #333;
+            vertical-align: middle;
+        }
+
+        .admin-table tr:hover {
+            background-color: #fcfcfc;
+        }
+
+    /* Status Badges */
+    .badge-status {
+        padding: 6px 12px;
+        border-radius: 30px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        display: inline-block;
+    }
+
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeeba;
+    }
+
+    .status-paid {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .status-cancelled {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+</style>
+
+<div class="container py-4">
+
+    <div class="page-header-card">
+        <div>
+            <h2 class="fw-bold mb-1" style="font-family: 'Playfair Display', serif;">Order Management</h2>
+            <p class="mb-0 text-white-50">Track, update, and manage customer orders.</p>
+        </div>
+        <div class="d-none d-md-block">
+            <div class="bg-white text-dark rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 50px; height: 50px;">
+                <i class="fas fa-boxes fa-lg" style="color: #1a3c1e;"></i>
+            </div>
+        </div>
     </div>
-    <div class="col-md-3 d-flex align-items-center">
-        <label for="statusFilter" class="me-2 mb-0">Status:</label>
-        <select id="statusFilter" class="form-select">
-            <option value="">All</option>
-            <option value="Pending">Pending</option>
-            <option value="Paid">Paid</option>
-            <option value="Cancelled">Cancelled</option>
-        </select>
+
+    <div class="filter-bar">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0 border-2" style="border-color: #eee;">
+                        <i class="fas fa-search text-muted"></i>
+                    </span>
+                    <input type="text" id="searchBox" placeholder="Search by Order ID or Email..." class="search-input border-start-0 ps-0" />
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="d-flex align-items-center">
+                    <label for="statusFilter" class="me-3 fw-bold text-muted small text-uppercase">Status:</label>
+                    <select id="statusFilter" class="form-select status-select w-100">
+                        <option value="">All Statuses</option>
+                        <option value="Pending">🟡 Pending</option>
+                        <option value="Paid">🟢 Paid</option>
+                        <option value="Preparing">👨‍🍳 Preparing</option>
+                        <option value="Ready">🥡 Ready for Pickup</option>
+                        <option value="Completed">✅ Completed</option>
+                        <option value="Cancelled">🔴 Cancelled</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-2 text-end">
+                <button onclick="loadOrders()" class="btn btn-outline-secondary w-100" style="border-radius: 8px;">
+                    <i class="fas fa-sync-alt me-1"></i> Refresh
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="ordersTable" class="table-responsive">
+        <div class="text-center py-5">
+            <div class="spinner-border text-success" role="status"></div>
+            <p class="mt-2 text-muted">Loading orders data...</p>
+        </div>
+    </div>
+
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="statusToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-check-circle me-2"></i> Order status updated successfully!
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
     </div>
 
 </div>
-
-<div id="ordersTable"></div>
 
 @section foot {
     <script>
@@ -34,15 +200,41 @@
             let search = $("#searchBox").val();
             let status = $("#statusFilter").val();
 
+            // Add fade effect for smoother transitions
+            $("#ordersTable").css("opacity", "0.5");
+
             $.get("/Admin/LoadOrders", { search: search, sort: sort, status: status, page: page }, function (data) {
-                $("#ordersTable").html(data);
+                $("#ordersTable").html(data).css("opacity", "1");
             });
         }
 
-        // Search on keyup
+        // --- NEW: Function to Update Status via AJAX ---
+        function updateStatus(orderId, newStatus) {
+            if (confirm(`Are you sure you want to mark Order #${orderId} as ${newStatus}?`)) {
+                $.post("/Admin/UpdateOrderStatus", { id: orderId, status: newStatus }, function (response) {
+                    if (response.success) {
+                        // Show success toast
+                        var toastEl = document.getElementById('statusToast');
+                        var toast = new bootstrap.Toast(toastEl);
+                        toast.show();
+
+                        // Reload table to reflect changes without refreshing page
+                        loadOrders();
+                    } else {
+                        alert("Failed to update status: " + response.message);
+                    }
+                });
+            }
+        }
+
+        // Search on keyup with slight delay (debounce)
+        let timeout = null;
         $("#searchBox").on("keyup", function () {
-            page = 1;
-            loadOrders();
+            clearTimeout(timeout);
+            timeout = setTimeout(function () {
+                page = 1;
+                loadOrders();
+            }, 300);
         });
 
         // Filter on status change

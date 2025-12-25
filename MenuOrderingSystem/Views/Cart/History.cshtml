@@ -64,23 +64,49 @@
                                 </td>
 
                                 <td class="text-center">
-                                    @if (order.Status == "Paid")
+                                    @switch (order.Status)
                                     {
-                                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2">
-                                            <i class="fas fa-check-circle me-1"></i> Paid
-                                        </span>
-                                    }
-                                    else if (order.Status == "Cancelled")
-                                    {
-                                        <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3 py-2">
-                                            <i class="fas fa-times-circle me-1"></i> Cancelled
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-secondary bg-opacity-10 text-dark rounded-pill px-3 py-2">
-                                            @order.Status
-                                        </span>
+                                        case "Pending":
+                                            <span class="badge-pill badge-pending">
+                                                <i class="fas fa-hourglass-half"></i> Pending
+                                            </span>
+                                            break;
+
+                                        case "Paid":
+                                            <span class="badge-pill badge-paid">
+                                                <i class="fas fa-check-circle"></i> Paid
+                                            </span>
+                                            break;
+
+                                        case "Preparing":
+                                            <span class="badge-pill badge-preparing">
+                                                <i class="fas fa-fire"></i> Preparing
+                                            </span>
+                                            break;
+
+                                        case "Ready":
+                                            <span class="badge-pill badge-ready">
+                                                <i class="fas fa-shopping-bag"></i> Ready
+                                            </span>
+                                            break;
+
+                                        case "Completed":
+                                            <span class="badge-pill badge-completed">
+                                                <i class="fas fa-check-double"></i> Completed
+                                            </span>
+                                            break;
+
+                                        case "Cancelled":
+                                            <span class="badge-pill badge-cancelled">
+                                                <i class="fas fa-times-circle"></i> Cancelled
+                                            </span>
+                                            break;
+
+                                        default:
+                                            <span class="badge-pill badge-default">
+                                                @order.Status
+                                            </span>
+                                            break;
                                     }
                                 </td>
 
@@ -120,5 +146,61 @@
         background-color: var(--chagee-gold) !important;
         border-color: var(--chagee-gold) !important;
         color: white !important;
+    }
+
+    /* Status Badge Styles */
+    .badge-pill {
+        padding: 6px 12px;
+        border-radius: 30px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        letter-spacing: 0.5px;
+    }
+
+    /* Status Colors */
+    .badge-pending {
+        background-color: #fffbeb;
+        color: #b45309;
+        border: 1px solid #fcd34d;
+    }
+
+    .badge-paid {
+        background-color: #d1e7dd;
+        color: #0f5132;
+        border: 1px solid #badbcc;
+    }
+
+    .badge-preparing {
+        background-color: #cfe2ff;
+        color: #084298;
+        border: 1px solid #b6d4fe;
+    }
+
+    .badge-ready {
+        background-color: #e2d9f3;
+        color: #432874;
+        border: 1px solid #d0c2eb;
+    }
+
+    .badge-completed {
+        background-color: #d1e7dd;
+        color: #146c43;
+        border: 1px solid #a3cfbb;
+    }
+
+    .badge-cancelled {
+        background-color: #f8d7da;
+        color: #842029;
+        border: 1px solid #f5c2c7;
+    }
+
+    .badge-default {
+        background-color: #f3f4f6;
+        color: #4b5563;
+        border: 1px solid #e5e7eb;
     }
 </style>

@@ -34,7 +34,7 @@ namespace MenuOrderingSystem.Controllers {
         {
             var user = db.Users.Find(vm.Email);
 
-            if (user == null || !hp.VerifyPassword(user.Hash, vm.Password))
+            if (user == null || !hp.VerifyPassword(user.PasswordHash, vm.Password))
             {
                 ModelState.AddModelError("", "Login credentials not matched.");
                 return View(vm);
@@ -112,7 +112,7 @@ namespace MenuOrderingSystem.Controllers {
                 db.Members.Add(new()
                 {
                     Email = vm.Email,
-                    Hash = hp.HashPassword(vm.Password),
+                    PasswordHash = hp.HashPassword(vm.Password),
                     Name = vm.Name,
                     PhotoURL = hp.SavePhoto(vm.Photo, "photos"),
                     Phone = vm.PhoneNumber
@@ -141,14 +141,14 @@ namespace MenuOrderingSystem.Controllers {
             var u = db.Users.Find(User.Identity!.Name);
             if (u == null) return RedirectToAction("Index", "Home");
 
-            if (!hp.VerifyPassword(u.Hash, vm.Current))
+            if (!hp.VerifyPassword(u.PasswordHash, vm.Current))
             {
                 ModelState.AddModelError("Current", "Current Password not matched.");
             }
 
             if (ModelState.IsValid)
             {
-                u.Hash = hp.HashPassword(vm.New);
+                u.PasswordHash = hp.HashPassword(vm.New);
                 db.SaveChanges();
 
                 TempData["Info"] = "Password updated.";
@@ -235,7 +235,7 @@ namespace MenuOrderingSystem.Controllers {
             {
                 string password = hp.RandomPassword();
 
-                u!.Hash = hp.HashPassword(password);
+                u!.PasswordHash = hp.HashPassword(password);
                 db.SaveChanges();
 
                 // Send reset password email

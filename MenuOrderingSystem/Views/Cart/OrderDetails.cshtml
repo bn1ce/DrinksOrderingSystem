@@ -5,6 +5,79 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<style>
+    /* 1. Status Badge Styles (Copied from Admin for Consistency) */
+    .badge-pill-custom {
+        padding: 8px 16px;
+        border-radius: 30px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        letter-spacing: 0.5px;
+    }
+
+    .badge-pending {
+        background-color: #fffbeb;
+        color: #b45309;
+        border: 1px solid #fcd34d;
+    }
+
+    .badge-paid {
+        background-color: #d1e7dd;
+        color: #0f5132;
+        border: 1px solid #badbcc;
+    }
+
+    .badge-preparing {
+        background-color: #cfe2ff;
+        color: #084298;
+        border: 1px solid #b6d4fe;
+    }
+
+    .badge-ready {
+        background-color: #e2d9f3;
+        color: #432874;
+        border: 1px solid #d0c2eb;
+    }
+
+    .badge-completed {
+        background-color: #d1e7dd;
+        color: #146c43;
+        border: 1px solid #a3cfbb;
+    }
+
+    .badge-cancelled {
+        background-color: #f8d7da;
+        color: #842029;
+        border: 1px solid #f5c2c7;
+    }
+
+    .badge-default {
+        background-color: #f3f4f6;
+        color: #4b5563;
+        border: 1px solid #e5e7eb;
+    }
+
+    /* 2. Hover Effects */
+    .hover-gold:hover {
+        color: #c5a059 !important; /* Chagee Gold */
+        text-decoration: underline !important;
+    }
+
+    .hover-scale:hover {
+        transform: translateY(-2px);
+        transition: transform 0.2s;
+    }
+
+
+
+
+    
+</style>
+
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
@@ -27,23 +100,29 @@
                     </div>
 
                     <div>
-                        @if (Model.Status == "Paid")
+                        @switch (Model.Status)
                         {
-                            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-4 py-2 fs-6 border border-success">
-                                <i class="fas fa-check-circle me-1"></i> Paid
-                            </span>
-                        }
-                        else if (Model.Status == "Cancelled")
-                        {
-                            <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-4 py-2 fs-6 border border-danger">
-                                <i class="fas fa-times-circle me-1"></i> Cancelled
-                            </span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-warning bg-opacity-10 text-dark rounded-pill px-4 py-2 fs-6 border border-warning">
-                                @Model.Status
-                            </span>
+                            case "Pending":
+                                <span class="badge-pill-custom badge-pending"><i class="fas fa-hourglass-half"></i> Pending</span>
+                                break;
+                            case "Paid":
+                                <span class="badge-pill-custom badge-paid"><i class="fas fa-check-circle"></i> Paid</span>
+                                break;
+                            case "Preparing":
+                                <span class="badge-pill-custom badge-preparing"><i class="fas fa-fire"></i> Preparing</span>
+                                break;
+                            case "Ready":
+                                <span class="badge-pill-custom badge-ready"><i class="fas fa-shopping-bag"></i> Ready</span>
+                                break;
+                            case "Completed":
+                                <span class="badge-pill-custom badge-completed"><i class="fas fa-check-double"></i> Completed</span>
+                                break;
+                            case "Cancelled":
+                                <span class="badge-pill-custom badge-cancelled"><i class="fas fa-times-circle"></i> Cancelled</span>
+                                break;
+                            default:
+                                <span class="badge-pill-custom badge-default">@Model.Status</span>
+                                break;
                         }
                     </div>
                 </div>
@@ -61,7 +140,6 @@
                             <tbody>
                                 @foreach (var item in Model.OrderItems)
                                 {
-                                    // Calculate snapshot price based on logic provided
                                     var unitPrice = item.Size == "Large" ? item.Drink.PriceLarge : item.Drink.PriceRegular;
 
                                     <tr>
@@ -107,14 +185,10 @@
                                 <span>Subtotal</span>
                                 <span>RM @Model.TotalAmount.ToString("N2")</span>
                             </div>
-                            <div class="d-flex justify-content-between mb-3 text-muted">
-                                <span>Tax (0%)</span>
-                                <span>RM 0.00</span>
-                            </div>
                             <hr class="text-muted opacity-25">
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="fs-5 fw-bold text-dark">Grand Total</span>
-                                <span class="fs-4 fw-bold" style="color: var(--chagee-green);">
+                                <span class="fs-4 fw-bold" style="color: #1a3c1e;">
                                     RM @Model.TotalAmount.ToString("N2")
                                 </span>
                             </div>
@@ -127,36 +201,8 @@
                 <a href="/Drink/Index" class="btn btn-outline-success rounded-pill px-4 py-2 hover-scale">
                     <i class="fas fa-shopping-bag me-2"></i> Order Again
                 </a>
-                <button onclick="window.print()" class="btn btn-link text-muted text-decoration-none">
-                    <i class="fas fa-print me-2"></i> Print Receipt
-                </button>
             </div>
 
         </div>
     </div>
 </div>
-
-<style>
-    /* Styling for the custom hover link */
-    .hover-gold:hover {
-        color: var(--chagee-gold) !important;
-        text-decoration: underline !important;
-    }
-
-    .hover-scale:hover {
-        transform: translateY(-2px);
-        transition: transform 0.2s;
-    }
-
-    /* Print Styles: Hide buttons when printing */
-    @@media print {
-        header, footer, .btn, .breadcrumb, .mb-4 {
-            display: none !important;
-        }
-
-        .card {
-            border: none !important;
-            shadow: none !important;
-        }
-    }
-</style>

@@ -105,14 +105,19 @@ namespace MenuOrderingSystem.Models
     public class User
     {
         [Key, MaxLength(100)]
-        public string Email { get; set; }
+        [Required]
+        public string Email { get; set; } = string.Empty;
         [MaxLength(100)]
-        public string Hash { get; set; }
+        public string PasswordHash { get; set; } = string.Empty;
         [MaxLength(100)]
-        public string Name { get; set; }
+        [Required]
+        public string Name { get; set; } = string.Empty;
 
         [MaxLength(12)]
-        public string Phone { get; set; }
+        public string? Phone { get; set; }
+
+        [MaxLength(255)]
+        public string? PhotoURL { get; set; }
         public string Role => GetType().Name;
     }
 
@@ -123,8 +128,6 @@ namespace MenuOrderingSystem.Models
 
     public class Member : User
     {
-        [MaxLength(100)]
-        public string PhotoURL { get; set; }
 
         // Navigation Properties
         public virtual ICollection<Feedback> Feedbacks { get; set; } = new List<Feedback>();

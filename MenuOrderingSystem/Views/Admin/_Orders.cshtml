@@ -1,82 +1,318 @@
 ﻿@using MenuOrderingSystem.Models
-@model PagedResult<MenuOrderingSystem.Models.Order> 
+@model PagedResult<MenuOrderingSystem.Models.Order>
 
+<style>
+    /* Table Styling overrides */
+    .admin-table-container {
+        width: 100%;
+        overflow-x: auto;
+    }
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>
-                <a href="javascript:void(0)" onclick="toggleSort('id')">
-                    Order ID <span id="sort-id">▲▼</span>
-                </a>
-            </th>
-            <th>Member Email</th>
-            <th>
-                <a href="javascript:void(0)" onclick="toggleSort('time')">
-                    Order Time <span id="sort-time">▲▼</span>
-                </a>
-            </th>
-            <th>
-                <a href="javascript:void(0)" onclick="toggleSort('total')">
-                    Total (RM) <span id="sort-total">▲▼</span>
-                </a>
-            </th>
-            <th>Status</th> 
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var order in Model.Items)
-        {
+    .premium-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+        .premium-table thead th {
+            background-color: #f9fafb;
+            padding: 16px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6b7280;
+            border-bottom: 2px solid #e5e7eb;
+            white-space: nowrap;
+        }
+
+        .premium-table tbody td {
+            padding: 16px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f3f4f6;
+            color: #374151;
+            font-size: 0.95rem;
+            transition: background-color 0.2s;
+        }
+
+        .premium-table tbody tr:hover td {
+            background-color: #f8fafc;
+        }
+
+    /* Sortable Links */
+    .sort-link {
+        text-decoration: none;
+        color: inherit;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: color 0.2s;
+        cursor: pointer;
+    }
+
+        .sort-link:hover {
+            color: #1a3c1e; /* Chagee Green */
+        }
+
+    .sort-icon {
+        font-size: 0.8rem;
+        opacity: 0.4;
+        font-weight: normal;
+    }
+
+    .sort-link:hover .sort-icon {
+        opacity: 1;
+    }
+
+    /* Action Button & Dropdown */
+    .btn-group-sm > .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        border-radius: 0.2rem;
+    }
+
+    /* Status Badges */
+    .badge-pill {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+        .badge-pill::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: currentColor;
+        }
+
+    .badge-pending {
+        background-color: #fffbeb;
+        color: #b45309;
+    }
+
+    .badge-paid {
+        background-color: #d1e7dd;
+        color: #0f5132;
+    }
+    /* Green */
+    .badge-preparing {
+        background-color: #cfe2ff;
+        color: #084298;
+    }
+    /* Blue */
+    .badge-ready {
+        background-color: #e2d9f3;
+        color: #432874;
+    }
+    /* Purple */
+    .badge-completed {
+        background-color: #d1e7dd;
+        color: #146c43;
+    }
+    /* Dark Green */
+    .badge-cancelled {
+        background-color: #fef2f2;
+        color: #b91c1c;
+    }
+    /* Red */
+    .badge-default {
+        background-color: #f3f4f6;
+        color: #4b5563;
+    }
+
+    /* Pagination */
+    .pagination-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 20px;
+        border-top: 1px solid #f3f4f6;
+        margin-top: 10px;
+    }
+
+    .btn-page {
+        padding: 8px 16px;
+        border: 1px solid #e5e7eb;
+        background: #fff;
+        border-radius: 8px;
+        color: #374151;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+        .btn-page:hover {
+            border-color: #c5a059;
+            color: #c5a059;
+        }
+</style>
+
+<div class="admin-table-container">
+    <table class="premium-table">
+        <thead>
             <tr>
-                <td>@order.OrderID</td>
-                <td>@order.MemberEmail</td>
-                <td>@order.OrderTime.ToString("g")</td>
-                <td>@order.TotalAmount.ToString("F2")</td>
-                <td>
-                    @switch (order.Status)
-                    {
-                        case "Pending":
-                            <span class="badge bg-warning text-dark">@order.Status</span>
-                            break;
-                        case "Paid":
-                            <span class="badge bg-success">@order.Status</span>
-                            break;
-                        case "Cancelled":
-                            <span class="badge bg-danger">@order.Status</span>
-                            break;
-                        default:
-                            <span class="badge bg-secondary">@order.Status</span>
-                            break;
-                    }
-                </td>
-                <td>
-                    <a asp-action="OrderDetail" asp-route-id="@order.OrderID" class="btn btn-sm btn-info">View Details</a>
-                </td>
+                <th>
+                    <a href="javascript:void(0)" onclick="toggleSort('id')" class="sort-link">
+                        Order ID <span id="sort-id" class="sort-icon">⇅</span>
+                    </a>
+                </th>
+                <th>Member Email</th>
+                <th>
+                    <a href="javascript:void(0)" onclick="toggleSort('time')" class="sort-link">
+                        Order Time <span id="sort-time" class="sort-icon">⇅</span>
+                    </a>
+                </th>
+                <th>
+                    <a href="javascript:void(0)" onclick="toggleSort('total')" class="sort-link">
+                        Total (RM) <span id="sort-total" class="sort-icon">⇅</span>
+                    </a>
+                </th>
+                <th>Status</th>
+                <th class="text-end">Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @if (!Model.Items.Any())
+            {
+                <tr>
+                    <td colspan="6" class="text-center py-5 text-muted">
+                        <i class="fas fa-inbox fa-3x mb-3 text-light"></i>
+                        <p class="mb-0">No orders found.</p>
+                    </td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var order in Model.Items)
+                {
+                    <tr>
+                        <td class="fw-bold text-dark">#@order.OrderID</td>
+                        <td>@order.MemberEmail</td>
+                        <td class="text-muted">@order.OrderTime.ToString("dd MMM, h:mm tt")</td>
+                        <td class="fw-bold" style="color: #1a3c1e;">
+                            RM @order.TotalAmount.ToString("F2")
+                        </td>
+                        <td>
+                            @switch (order.Status)
+                            {
+                                case "Pending":
+                                    <span class="badge-pill badge-pending">Pending</span>
+                                    break;
+                                case "Paid":
+                                    <span class="badge-pill badge-paid">Paid</span>
+                                    break;
+                                case "Preparing":
+                                    <span class="badge-pill badge-preparing"><i class="fas fa-fire me-1" style="font-size:0.7rem"></i> Preparing</span>
+                                    break;
+                                case "Ready":
+                                    <span class="badge-pill badge-ready"><i class="fas fa-shopping-bag me-1" style="font-size:0.7rem"></i> Ready</span>
+                                    break;
+                                case "Completed":
+                                    <span class="badge-pill badge-completed">Completed</span>
+                                    break;
+                                case "Cancelled":
+                                    <span class="badge-pill badge-cancelled">Cancelled</span>
+                                    break;
+                                default:
+                                    <span class="badge-pill badge-default">@order.Status</span>
+                                    break;
+                            }
+                        </td>
+                        <td class="text-end">
+                            <div class="btn-group">
+                                <a asp-action="OrderDetail" asp-route-id="@order.OrderID" class="btn btn-sm btn-outline-secondary" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </a>
 
-<!-- Paging -->
-<div class="d-flex justify-content-between">
-    <div>
-        Showing @((Model.Page - 1) * Model.PageSize + 1) -
-        @(Math.Min(Model.Page * Model.PageSize, Model.TotalItems)) of @Model.TotalItems
-    </div>
-    <div>
-        @if (Model.Page > 1)
-        {
-            <button class="btn btn-sm btn-secondary" onclick="page--; loadOrders()">Previous</button>
-        }
-        @if (Model.Page * Model.PageSize < Model.TotalItems)
-        {
-            <button class="btn btn-sm btn-secondary" onclick="page++; loadOrders()">Next</button>
-        }
-    </div>
+                                @if (order.Status != "Cancelled" && order.Status != "Completed")
+                                {
+                                    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span class="visually-hidden">Toggle Dropdown</span>
+                                    </button>
+
+                                    <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                                        <li><h6 class="dropdown-header">Update Status</h6></li>
+
+                                        @if (order.Status == "Pending")
+                                        {
+                                            <li><a class="dropdown-item text-warning" href="javascript:void(0)" onclick="updateStatus('@order.OrderID', 'Paid')">💰 Mark as Paid</a></li>
+                                        }
+
+                                        @if (order.Status == "Paid")
+                                        {
+                                            <li><a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus('@order.OrderID', 'Preparing')">👨‍🍳 Mark as Preparing</a></li>
+                                        }
+
+                                        @if (order.Status == "Preparing")
+                                        {
+                                            <li><a class="dropdown-item" href="javascript:void(0)" onclick="updateStatus('@order.OrderID', 'Ready')">🥡 Mark as Ready</a></li>
+                                        }
+
+                                        @if (order.Status == "Ready")
+                                        {
+                                            <li><a class="dropdown-item text-success" href="javascript:void(0)" onclick="updateStatus('@order.OrderID', 'Completed')">✅ Mark as Completed</a></li>
+                                        }
+
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="javascript:void(0)" onclick="updateStatus('@order.OrderID', 'Cancelled')">❌ Cancel Order</a></li>
+                                    </ul>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
 </div>
 
+@if (Model.TotalItems > 0)
+{
+    <div class="pagination-bar">
+        <div class="text-muted small">
+            Showing <span class="fw-bold text-dark">@((Model.Page - 1) * Model.PageSize + 1)</span>
+            to <span class="fw-bold text-dark">@(Math.Min(Model.Page * Model.PageSize, Model.TotalItems))</span>
+            of <span class="fw-bold text-dark">@Model.TotalItems</span>
+        </div>
+
+        <div class="d-flex gap-2">
+            @if (Model.Page > 1)
+            {
+                <button class="btn-page" onclick="page--; loadOrders()">
+                    <i class="fas fa-chevron-left me-1"></i> Previous
+                </button>
+            }
+            else
+            {
+                <button class="btn-page text-muted" disabled style="background: #f9fafb; cursor: not-allowed;">
+                    <i class="fas fa-chevron-left me-1"></i> Previous
+                </button>
+            }
+
+            @if (Model.Page * Model.PageSize < Model.TotalItems)
+            {
+                <button class="btn-page" onclick="page++; loadOrders()">
+                    Next <i class="fas fa-chevron-right ms-1"></i>
+                </button>
+            }
+            else
+            {
+                <button class="btn-page text-muted" disabled style="background: #f9fafb; cursor: not-allowed;">
+                    Next <i class="fas fa-chevron-right ms-1"></i>
+                </button>
+            }
+        </div>
+    </div>
+}
+
 <script>
+    // 1. YOUR ORIGINAL TOGGLE FUNCTION (Restored)
     function toggleSort(field) {
         if (sort === field) {
             sort = field + "_desc";
@@ -87,19 +323,20 @@
         updateArrows();
     }
 
+    // 2. Updated Arrow Logic for new UI symbols
     function updateArrows() {
-        // Reset to neutral arrows
-        $("#sort-id").text("▲▼");
-        $("#sort-time").text("▲▼");
-        $("#sort-total").text("▲▼");
+        // Reset to neutral
+        $("#sort-id, #sort-time, #sort-total").html("⇅").css("opacity", "0.3");
 
-        // Highlight active sort
+        // Set active arrow based on 'sort' variable from parent
+        const arrow = sort.endsWith("_desc") ? "↓" : "↑";
+
         if (sort.startsWith("id")) {
-            $("#sort-id").text(sort.endsWith("_desc") ? "▼" : "▲");
+            $("#sort-id").html(arrow).css("opacity", "1");
         } else if (sort.startsWith("time")) {
-            $("#sort-time").text(sort.endsWith("_desc") ? "▼" : "▲");
+            $("#sort-time").html(arrow).css("opacity", "1");
         } else if (sort.startsWith("total")) {
-            $("#sort-total").text(sort.endsWith("_desc") ? "▼" : "▲");
+            $("#sort-total").html(arrow).css("opacity", "1");
         }
     }
 
