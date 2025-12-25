@@ -257,29 +257,55 @@ namespace MenuOrderingSystem.Controllers {
 
             var url = Url.Action("Login", "Account", null, "https");
 
-            var path = u switch
+            // 1. GET FILENAME
+            string? photoFile = u switch
             {
-                Admin => Path.Combine(en.WebRootPath, "photos", "admin.jpg"),
-                Member m => Path.Combine(en.WebRootPath, "photos", m.PhotoURL),
-                _ => "",
+                Admin a => a.PhotoURL,
+                Member m => m.PhotoURL,
+                _ => null
             };
 
-            var att = new Attachment(path);
-            mail.Attachments.Add(att);
-            att.ContentId = "photo";
+            // 2. BUILD PATH
+            string path = "";
+            if (!string.IsNullOrEmpty(photoFile))
+            {
+                path = Path.Combine(en.WebRootPath, "photos", photoFile);
+            }
 
+            // 3. FALLBACK TO LOGO
+            if (string.IsNullOrEmpty(path) || !System.IO.File.Exists(path))
+            {
+                path = Path.Combine(en.WebRootPath, "images", "logo.png");
+            }
+
+            // 4. ATTACH
+            if (System.IO.File.Exists(path))
+            {
+                var att = new Attachment(path);
+                att.ContentId = "photo";
+                mail.Attachments.Add(att);
+            }
+
+            // 5. BODY
             mail.Body = $@"
-                <img src='cid:photo' style='width: 200px; height: 200px;
-                                            border: 1px solid #333'>
-                <p>Dear {u.Name},<p>
-                <p>Your password has been reset to:</p>
-                <h1 style='color: #2d5a27;'>{password}</h1>
-                <p>
-                    Please <a href='{url}'>login</a>
-                    with your new password.
-                </p>
-                <p>Best regards,<br><b>CHAGEE Team</b></p>
-            ";
+        <div style='text-align: center; font-family: Arial, sans-serif; padding: 20px;'>
+            <img src='cid:photo' style='width: 150px; height: 150px; object-fit: cover; border-radius: 50%; border: 3px solid #c5a059;'>
+            <h2 style='color: #1a3c1e;'>Password Reset</h2>
+            <p style='color: #333;'>Dear {u.Name},</p>
+            <p style='color: #555;'>Your password has been successfully reset to:</p>
+            <div style='background: #f4f6f8; display: inline-block; padding: 15px 30px; border-radius: 8px; margin: 10px 0;'>
+                <h1 style='color: #c5a059; margin: 0; letter-spacing: 2px;'>{password}</h1>
+            </div>
+            <p style='color: #555;'>
+                Please <a href='{url}' style='color: #1a3c1e; font-weight: bold;'>login here</a> with your new password.
+            </p>
+            <br>
+            <hr style='border: 0; border-top: 1px solid #eee;'>
+            <p style='color: #999; font-size: 12px; margin-top: 20px;'>
+                Best regards,<br><b>CHAGEE Team</b>
+            </p>
+        </div>
+    ";
 
             hp.SendEmail(mail);
         }
