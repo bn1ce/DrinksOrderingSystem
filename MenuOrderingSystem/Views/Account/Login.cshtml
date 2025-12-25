@@ -2,41 +2,88 @@
 @model LoginVM
 
 @{
-    ViewBag.Title = "Account | Login";
-    Layout = "_AuthLayout";
+    ViewBag.Title = "Member Login";
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
 }
 
-<!-- Logo -->
-<div class="auth-logo">
-    <img src="~/images/logo.png" alt="CHAGEE Logo" />
+<div class="mb-4">
+    <h2 class="auth-title fw-bold" style="color: #2d5a27;">Welcome Back</h2>
+    <p class="auth-subtitle text-muted small">Please enter your details to sign in</p>
 </div>
 
-<!-- Title -->
-<h2 class="auth-title">Welcome</h2>
-<p class="auth-subtitle">Log in to continue</p>
-
-<!-- Form -->   
 <form method="post">
-    <div asp-validation-summary="ModelOnly" class="validation"></div>
+    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3 text-start"></div>
 
-    <div class="mb-3 text-start">
-        <input asp-for="Email" class="form-control" placeholder="Email address" autofocus />
-        <span asp-validation-for="Email" class="validation"></span>
+    <div class="form-group mb-4">
+        <div class="input-group">
+            <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-envelope"></i></span>
+            <input asp-for="Email" class="form-control border-start-0 ps-0" placeholder="Email Address" autofocus />
+        </div>
+        <span asp-validation-for="Email" class="text-danger small text-start d-block mt-1"></span>
     </div>
 
-    <div class="mb-3 text-start">
-        <input asp-for="Password" type="password" class="form-control" placeholder="Password" />
-        <span asp-validation-for="Password" class="validation"></span>
+    <div class="form-group mb-2">
+        <div class="input-group">
+            <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-lock"></i></span>
+            <input asp-for="Password" type="password" class="form-control border-start-0 ps-0" placeholder="Password" />
+        </div>
+        <span asp-validation-for="Password" class="text-danger small text-start d-block mt-1"></span>
     </div>
 
-    <div class="forgot-password text-end mb-3">
-        <a href="/Account/ResetPassword">Forgot password?</a>
+    <div class="text-end mb-4">
+        <a href="/Account/ResetPassword" class="small fw-bold text-decoration-none hover-gold" style="color: #888;">
+            Forgot Password?
+        </a>
     </div>
 
-    <button type="submit" class="btn btn-auth">Continue</button>
+    <button type="submit" class="btn-auth shadow hover-lift">
+        Sign In <i class="fas fa-sign-in-alt ms-2"></i>
+    </button>
 </form>
 
-<!-- Footer -->
-<p class="auth-footer">
-    Don’t have an account? <a href="/Account/Register">Sign up</a>
-</p>
+<div class="auth-footer mt-4">
+    New to CHAGEE?
+    <a href="/Account/Register" class="fw-bold" style="color: #c5a059;">Create Account</a>
+</div>
+
+@section foot {
+    <style>
+        /* Shared Styles for Input Groups (Matches Register Page) */
+        .input-group-text {
+            border-color: #e0e0e0;
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+            padding-left: 15px;
+        }
+
+        .form-control {
+            border-color: #e0e0e0;
+            border-top-right-radius: 12px !important;
+            border-bottom-right-radius: 12px !important;
+            padding-left: 10px;
+            height: 48px; /* Slightly taller for premium feel */
+        }
+
+        /* Active State Colors */
+        .input-group:focus-within .input-group-text {
+            border-color: #c5a059;
+            color: #2d5a27 !important;
+        }
+
+        .input-group:focus-within .form-control {
+            border-color: #c5a059;
+            box-shadow: none;
+        }
+
+        /* Hover Effects */
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            transition: 0.3s;
+        }
+
+        .hover-gold:hover {
+            color: #c5a059 !important;
+            text-decoration: underline !important;
+        }
+    </style>
+}

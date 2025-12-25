@@ -1,344 +1,290 @@
 ﻿@model MenuOrderingSystem.Models.Member
 @{
-    ViewBag.Title = "Member | Profile";
+    ViewBag.Title = "My Profile";
 }
 
 <style>
+    :root {
+        --chagee-green: #2d5a27;
+        --chagee-light: #e8f5e9;
+        --chagee-gold: #c5a059;
+    }
+
     body {
-        background: url('/Images/homebg.png') no-repeat center center fixed;
-        background-size: cover;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        margin: 0;
-        padding: 0;
+        background-color: #f8f9fa;
+        font-family: 'Lato', sans-serif;
     }
 
-    .profile-card {
-        max-width: 600px;
-        background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(250,250,252,0.95) 100%);
-        border: 1px solid rgba(255,255,255,0.3);
-        backdrop-filter: blur(10px);
-        position: relative;
+    /* Main Container Card */
+    .profile-dashboard {
+        background: #fff;
+        border-radius: 30px;
         overflow: hidden;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-        .profile-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            transition: left 0.6s;
-        }
-
-        .profile-card:hover::before {
-            left: 100%;
-        }
-
-        .profile-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.3);
-        }
-
-    .profile-photo {
-        height: 160px;
-        width: 160px;
-        object-fit: cover;
-        border: 4px solid #fff;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        transition: all 0.4s ease;
+        box-shadow: 0 30px 60px rgba(45, 90, 39, 0.15);
+        min-height: 600px;
         position: relative;
-        cursor: pointer;
     }
 
-        .profile-photo:hover {
-            transform: scale(1.05);
-            box-shadow: 0 12px 35px rgba(0,0,0,0.2);
-        }
+    /* LEFT COLUMN: Identity (Green) */
+    .identity-sidebar {
+        background: linear-gradient(180deg, var(--chagee-green) 0%, #1e3c1a 100%);
+        color: white;
+        text-align: center;
+        padding: 50px 30px;
+        position: relative;
+    }
 
-        .profile-photo::after {
+        /* Decorative Circle */
+        .identity-sidebar::after {
             content: '';
             position: absolute;
-            top: -4px;
-            left: -4px;
-            right: -4px;
-            bottom: -4px;
+            bottom: -50px;
+            left: -50px;
+            width: 200px;
+            height: 200px;
             border-radius: 50%;
-            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #f5576c);
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 0.4s ease;
+            background: rgba(255,255,255,0.05);
         }
 
-        .profile-photo:hover::after {
-            opacity: 1;
-            animation: photoRotate 3s linear infinite;
-        }
-
-    @@keyframes photoRotate {
-        0% {
-            transform: rotate(0deg);
-        }
-
-        100% {
-            transform: rotate(360deg);
-        }
+    .profile-img-container {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        margin: 0 auto 25px;
     }
 
-    .info-row {
-        padding: 15px 20px;
-        border-radius: 12px;
-        transition: all 0.3s ease;
-        border: 1px solid transparent;
-        margin: 0;
+    .profile-img-dashboard {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 5px solid rgba(255,255,255,0.2);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        transition: transform 0.3s;
     }
 
-        .info-row:hover {
-            background: rgba(255,255,255,0.7);
-            border-color: rgba(0,0,0,0.1);
+        .profile-img-dashboard:hover {
+            transform: scale(1.05);
+            border-color: var(--chagee-gold);
+        }
+
+    .edit-photo-btn {
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        background: var(--chagee-gold);
+        color: white;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #fff;
+        cursor: pointer;
+        transition: 0.2s;
+        text-decoration: none;
+    }
+
+    .member-badge-pill {
+        background: rgba(255,255,255,0.1);
+        color: #fff;
+        padding: 8px 20px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+        backdrop-filter: blur(5px);
+        display: inline-block;
+        margin-top: 15px;
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    /* RIGHT COLUMN: Details (White) */
+    .details-panel {
+        padding: 50px;
+        background: #fff;
+    }
+
+    .section-title {
+        color: #2c3e50;
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        margin-bottom: 30px;
+        position: relative;
+        padding-bottom: 10px;
+    }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--chagee-green);
+        }
+
+    /* Info Cards */
+    .info-card {
+        background: #fff;
+        border: 1px solid #f0f0f0;
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+    }
+
+        .info-card:hover {
+            border-color: var(--chagee-light);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
             transform: translateX(5px);
         }
 
-    .btn-premium {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border: none;
-        color: white;
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-        text-decoration: none;
-        display: inline-block;
+    .icon-box {
+        width: 50px;
+        height: 50px;
+        background: var(--chagee-light);
+        color: var(--chagee-green);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        margin-right: 20px;
     }
 
-        .btn-premium::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: left 0.6s;
-        }
-
-        .btn-premium:hover::before {
-            left: 100%;
-        }
-
-        .btn-premium:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
-            color: white;
-            text-decoration: none;
-        }
-
-    .btn-outline-premium {
-        border: 2px solid #667eea;
-        color: #667eea;
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        transition: all 0.3s ease;
-        background: transparent;
-        text-decoration: none;
-        display: inline-block;
-    }
-
-        .btn-outline-premium:hover {
-            background: #667eea;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.3);
-            text-decoration: none;
-        }
-
-    .glow-text {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        font-weight: 700;
-        margin: 0;
-    }
-
-    .floating {
-        animation: floatingAnim 3s ease-in-out infinite;
-    }
-
-    @@keyframes floatingAnim {
-        0%, 100% {
-            transform: translateY(0);
-        }
-
-        50% {
-            transform: translateY(-10px);
-        }
-    }
-
-    .pulse {
-        animation: pulseAnim 2s infinite;
-    }
-
-    @@keyframes pulseAnim {
-        0% {
-            box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4);
-        }
-
-        70% {
-            box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
-        }
-
-        100% {
-            box-shadow: 0 0 0 0 rgba(102, 126, 234, 0);
-        }
-    }
-
-    .divider {
-        height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(0,0,0,0.1), transparent);
-        margin: 20px 0;
-        border: 0;
-    }
-
-    .badge-premium {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 4px 12px;
-        border-radius: 20px;
+    .label-text {
         font-size: 0.75rem;
+        color: #999;
+        text-transform: uppercase;
         font-weight: 600;
-        letter-spacing: 0.5px;
-        display: inline-block;
+        margin-bottom: 4px;
     }
 
-    @@keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
+    .value-text {
+        font-size: 1rem;
+        color: #333;
+        font-weight: 700;
+    }
+
+    /* Action Buttons Area */
+    .action-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-top: 40px;
+    }
+
+    .btn-modern {
+        padding: 15px;
+        border-radius: 12px;
+        text-align: center;
+        text-decoration: none;
+        font-weight: 600;
+        transition: 0.3s;
+        border: none;
+    }
+
+    .btn-modern-primary {
+        background: var(--chagee-green);
+        color: white;
+        box-shadow: 0 8px 20px rgba(45, 90, 39, 0.2);
+    }
+
+        .btn-modern-primary:hover {
+            background: #234a20;
+            transform: translateY(-3px);
+            color: white;
         }
 
-        to {
-            opacity: 1;
-            transform: translateY(0);
+    .btn-modern-outline {
+        background: #fff;
+        color: var(--chagee-green);
+        border: 2px solid var(--chagee-light);
+    }
+
+        .btn-modern-outline:hover {
+            border-color: var(--chagee-green);
+            background: var(--chagee-light);
+            color: var(--chagee-green);
         }
-    }
-
-    .profile-card {
-        animation: fadeInUp 0.8s ease-out;
-    }
-
-    .auth-logo img {
-        max-height: 70px;
-        filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
-        display: block;
-        margin: 0 auto;
-    }
-
-    .text-muted {
-        color: #6c757d !important;
-    }
 </style>
 
-<div class="container mt-4 d-flex justify-content-center">
-    <div class="profile-card shadow-lg p-4 rounded-4 floating">
-        <div class="auth-logo text-center mb-4">
-            <img src="~/images/logo.png" alt="CHAGEE Logo">
-        </div>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
 
-        <h1 class="text-center h4 mb-4 glow-text">My Account Settings</h1>
-        <div class="text-center mb-4">
-            <span class="badge-premium">MEMBER</span>
-        </div>
+            <div class="profile-dashboard row g-0">
 
-        <div class="text-center mb-4 position-relative">
-            <img src="/photos/@Model.PhotoURL"
-                 alt="Profile photo of @Model.Name"
-                 class="rounded-circle shadow-sm profile-photo pulse">
-            
-        </div>
+                <div class="col-md-5 identity-sidebar d-flex flex-column justify-content-center">
 
-        <div class="text-center mb-4">
-            <h2 class="h5 mb-1" style="font-weight: 600; color: #2c3e50;">@Model.Name</h2>
-            <p class="text-muted small">Member Since @DateTime.Now.Year</p>
-        </div>
+                    <div class="profile-img-container">
+                        <img src="/photos/@Model.PhotoURL" alt="@Model.Name" class="profile-img-dashboard">
+                        <a href="/Account/UpdateProfile" class="edit-photo-btn" title="Change Photo">
+                            <i class="fas fa-camera"></i>
+                        </a>
+                    </div>
 
-        <div class="divider"></div>
+                    <h2 class="fw-bold mb-1">@Model.Name</h2>
+                    <p class="opacity-75 mb-3">@Model.Email</p>
 
-        <div class="px-2">
-            <div class="info-row mb-3">
-                <label class="text-muted small d-flex align-items-center">
-                    📧 Email Address
-                </label>
-                <p class="fs-5 fw-semibold mb-0 text-dark">@Model.Email</p>
-            </div>
+                    <div>
+                        <span class="member-badge-pill">
+                            <i class="fas fa-crown me-2 text-warning"></i> PREMIUM MEMBER
+                        </span>
+                    </div>
 
-            <div class="info-row mb-3">
-                <label class="text-muted small d-flex align-items-center">
-                    👤 Full Name
-                </label>
-                <p class="fs-5 fw-semibold mb-0 text-dark">@Model.Name</p>
-            </div>
+                   
+                </div>
 
-            <div class="info-row mb-4">
-                <label class="text-muted small d-flex align-items-center">
-                    📞 Phone Number
-                </label>
-                <p class="fs-5 fw-semibold mb-0 text-dark">@Model.Phone</p>
-            </div>
+                <div class="col-md-7 details-panel">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="section-title mb-0">Personal Details</h3>
+                        <a href="/Account/Logout" class="text-danger small fw-bold text-decoration-none bg-light px-3 py-1 rounded-pill">
+                            <i class="fas fa-sign-out-alt me-1"></i> Logout
+                        </a>
+                    </div>
 
-            <div class="divider"></div>
+                    <div class="info-card">
+                        <div class="icon-box">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div>
+                            <div class="label-text">Email Address</div>
+                            <div class="value-text">@Model.Email</div>
+                        </div>
+                    </div>
 
-            <div class="info-row mb-4 d-flex justify-content-center gap-3">
-                <a href="/Account/UpdateProfile"
-                   class="btn btn-premium py-2 rounded-3 shadow-sm text-center"
-                   style="letter-spacing: .5px; min-width: 160px;">
-                    ✏️ Edit Profile
-                </a>
-                <a href="/Account/UpdatePassword"
-                   class="btn btn-outline-premium py-2 rounded-3 shadow-sm text-center"
-                   style="letter-spacing: .5px; min-width: 160px;">
-                    🔑 Change Password
-                </a>
-            </div>
+                    <div class="info-card">
+                        <div class="icon-box">
+                            <i class="fas fa-phone-alt"></i>
+                        </div>
+                        <div>
+                            <div class="label-text">Phone Number</div>
+                            <div class="value-text">@Model.Phone</div>
+                        </div>
+                    </div>
 
-            <div class="text-center mt-4">
-                <a href="/Account/Logout">Logout Account</a>
-            </div>
+                    <div class="action-grid">
+                        <a href="/Account/UpdateProfile" class="btn-modern btn-modern-primary">
+                            Edit Profile
+                        </a>
+                        <a href="/Account/UpdatePassword" class="btn-modern btn-modern-outline">
+                            Change Password
+                        </a>
+                    </div>
 
+                    <div class="mt-4 text-center">
+                        <small class="text-muted">
+                            <i class="fas fa-clock me-1"></i> Member since @DateTime.Now.Year
+                        </small>
+                    </div>
 
-            <div class="text-center mt-4">
-                <small class="text-muted">Last updated: @DateTime.Now.ToString("MMM dd, yyyy 'at' h:mm tt")</small>
+                </div>
+
             </div>
         </div>
     </div>
 </div>
-
-<script>
-    // Add subtle interactive effects
-    document.addEventListener('DOMContentLoaded', function() {
-        const card = document.querySelector('.profile-card');
-        const photo = document.querySelector('.profile-photo');
-
-        // Add click effect on photo
-        if (photo) {
-            photo.addEventListener('click', function() {
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = 'scale(1.05)';
-                }, 150);
-            });
-        }
-
-        // Parallax effect on mouse move
-        if (card) {
-            document.addEventListener('mousemove', function(e) {
-                const x = (window.innerWidth - e.pageX * 2) / 100;
-                const y = (window.innerHeight - e.pageY * 2) / 100;
-                card.style.transform = `translateY(-5px) rotateX(${y}deg) rotateY(${x}deg)`;
-            });
-        }
-    });
-</script>
